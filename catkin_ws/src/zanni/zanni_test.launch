@@ -1,0 +1,4 @@
+<launch>
+	<node name="zanni_publisher" pkg="zanni" type="zanni"/>
+	<node name="zanni_stim_server" pkg="zanni" type="zanni_stim_server"/>
+</launch>
