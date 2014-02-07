@@ -1,0 +1,46 @@
+<launch>
+	<!-- Set up to use camera, which image slicer gets images from  -->
+   <env name="GSCAM_CONFIG" value="v4l2src ! ffmpegcolorspace" />
+   <node pkg="gscam" type="gscam" name="gscam" output = "screen">
+   	<param name="gstreamer_pipeline" value="v4l2src device=/dev/video0 ! videorate ! videoscale ! video/x-raw-rgb, framerate=5/1, width=320, height=240 ! ffmpegcolorspace | deinterlace"/>
+   	<!-- <param name="camera_parameters_file" value="$(find gscam)/camera_parameters.txt"/> -->
+   </node>
+   
+   <!-- Set up the image slicer, and the slicer test program, which sends data to labview -->
+   <node pkg="img_slicer" type="img_slicer" name="img_slicer"/>
+   <node pkg="img_slicer" type="slicer_test" name="testing_slicer"/>
+   <!-- <node pkg="rviz" type="rviz" name="rviz"/> -->
+
+	<!-- Set up the arm control system to control the arm via dish states -->
+   <!-- Launch file for CSV playback -->
+   <rosparam command="load" file="$(find arm)/launch/csv.yaml"/>
+	            
+   <!-- Time Server -->
+   <node pkg="time_server" name="time_server" type="time_server"/>    
+	                    
+   <!-- ARM Control -->   
+   <node pkg="arm" name="arm_control" type="arm_control"/>
+	                              
+   <!-- Dish Visualizer -->
+   <!-- <node pkg="dish_viz" name="dish_viz" type="dish_viz"/> -->
+	                                          
+   <!-- Voltage Distribution Creator -->
+   <node pkg="volt_distr" name="volt_distr" type="volt_distr"/>
+	                                                      
+   <!-- Dish/ARM Teleop -->
+   <node pkg="arm" name="teleop_arm_dish" type="teleop_arm_dish"/>
+	                                                                  
+   <!-- CAT Creator -->
+   <node pkg="burst_calc" name="cat_creator" type="cat_creator"/>
+	                                                                          
+   <!-- Burst Creator -->
+   <node pkg="burst_calc" name="burst_creator" type="burst_creator"/>
+	                                                                                  
+   <!-- Receiver Node to get data from labview -->
+	<node pkg="neuro_recv" name="recv" type="net_recv"/>
+	<!-- Use this to start up the fake receiver -->
+	<!-- <node pkg="neuro_recv" name="recv" type="mock_recv"/> -->
+	
+	                                                                                          
+</launch>
+                                              

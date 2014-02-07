@@ -1,0 +1,18 @@
+<package>
+  <description brief="act_vector">
+
+     act_vector
+
+  </description>
+  <author>Abraham Shultz</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/act_vector</url>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+  <depend package="neuro_recv"/>
+  <depend package="arm"/>
+  <depend package="burst_calc"/>
+</package>
+
+
