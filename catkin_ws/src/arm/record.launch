@@ -1,4 +1,0 @@
-<launch>
-   <!-- Receiver Node to get data from labview -->
-  	<node pkg="neuro_recv" name="recv" type="net_recv"/>
-</launch>
