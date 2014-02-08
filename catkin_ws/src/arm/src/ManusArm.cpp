@@ -4,8 +4,8 @@
  * Authors: Abraham Shultz, Jonathan Hasenzahl
  */
 
-#include "arm/ManusArm.hpp"
-#include "arm/MoUT.hpp"
+#include "ManusArm.hpp"
+#include "MoUT.hpp"
 
 using namespace std;
 

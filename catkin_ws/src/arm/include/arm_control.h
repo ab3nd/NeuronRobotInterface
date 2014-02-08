@@ -8,7 +8,7 @@
 #define ARM_CONTROL_H_
 
 #include "ros/ros.h"
-#include "arm/ManusArm.hpp"
+#include "ManusArm.hpp"
 #include "arm/cartesian_move.h"
 #include "arm/cartesian_moves.h"
 #include "arm/constant_move.h"

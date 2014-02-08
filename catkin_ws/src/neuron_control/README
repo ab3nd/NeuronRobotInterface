@@ -1,0 +1,3 @@
+This is the metapackage for the various packages that send control messages 
+to the arm based on the activity of neurons. All the code is in the 
+packages under this metapackage. 
