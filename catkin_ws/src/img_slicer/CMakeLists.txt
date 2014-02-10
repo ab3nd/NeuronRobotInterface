@@ -6,6 +6,9 @@ project(img_slicer)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  common_libs
+  zanni
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -49,11 +52,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  ImageSlicer.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -63,10 +65,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs  # Or other packages containing msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -92,25 +94,19 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a cpp library
-# add_library(img_slicer
-#   src/${PROJECT_NAME}/img_slicer.cpp
-# )
+add_executable(img_slicer src/ImageSlicer.cpp)
+target_link_libraries(img_slicer ${catkin_LIBRARIES} opencv)
 
-## Declare a cpp executable
-# add_executable(img_slicer_node src/img_slicer_node.cpp)
+add_executable(slicer_test src/slicerTest.cpp)
+target_link_libraries(slicer_test plotter Xaw Xmu Xt SM ICE Xext X11 png z m practical_socket ${catkin_LIBRARIES})
 
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-# add_dependencies(img_slicer_node img_slicer_generate_messages_cpp)
-
-## Specify libraries to link a library or executable target against
-# target_link_libraries(img_slicer_node
-#   ${catkin_LIBRARIES}
-# )
+include_directories(${catkin_INCLUDE_DIRS})
+add_executable(zanni_slices src/slicerToZanni.cpp)
+target_link_libraries(zanni_slices plotter Xaw Xmu Xt SM ICE Xext X11 png z m ${catkin_LIBRARIES})
 
 #############
 ## Install ##

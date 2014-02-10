@@ -6,6 +6,7 @@ project(dish_viz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  burst_calc
 )
 
 ## System dependencies are found with CMake's conventions
@@ -92,6 +93,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -100,17 +102,10 @@ include_directories(
 #   src/${PROJECT_NAME}/dish_viz.cpp
 # )
 
-## Declare a cpp executable
-# add_executable(dish_viz_node src/dish_viz_node.cpp)
-
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-# add_dependencies(dish_viz_node dish_viz_generate_messages_cpp)
-
-## Specify libraries to link a library or executable target against
-# target_link_libraries(dish_viz_node
-#   ${catkin_LIBRARIES}
-# )
+add_library(visualizer src/DishVisualizer.cpp)
+target_link_libraries(visualizer plotter Xaw Xmu Xt SM ICE Xext X11 png z m ${catkin_LIBRARIES})
+add_executable(dish_viz src/dish_viz.cpp)
+target_link_libraries(dish_viz visualizer ${catkin_LIBRARIES})
 
 #############
 ## Install ##

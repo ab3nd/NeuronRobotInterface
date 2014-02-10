@@ -4,11 +4,10 @@ project(activation_vector)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS roscpp burst_calc neuro_recv arm)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -88,24 +87,20 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
+include_directories(include ${catkin_INCLUDE_DIRS}) 
 
 ## Declare a cpp library
-# add_library(activation_vector
-#   src/${PROJECT_NAME}/activation_vector.cpp
-# )
+# add_library(buffer_spike_detector ../src/burst_calc/buffer_spike_detector.cpp)
 
 ## Declare a cpp executable
-# add_executable(activation_vector_node src/activation_vector_node.cpp)
+add_executable(act_vector src/act_vector.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(activation_vector_node activation_vector_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(activation_vector_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(act_vector ${catkin_LIBRARIES} buffer_spike_detector)
 
 #############
 ## Install ##

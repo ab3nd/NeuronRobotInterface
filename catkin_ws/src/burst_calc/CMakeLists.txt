@@ -70,8 +70,8 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES burst_calc
+   INCLUDE_DIRS include
+   LIBRARIES buffer_spike_detector
 #  CATKIN_DEPENDS roscpp
 #  DEPENDS system_lib
 )
@@ -84,25 +84,20 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a cpp library
-# add_library(burst_calc
-#   src/${PROJECT_NAME}/burst_calc.cpp
-# )
+# The burst creator
+add_executable(burst_creator src/burst_creator.cpp)
+add_library(buffer_spike_detector src/buffer_spike_detector.cpp)
+add_library(burst_checker src/burst_checker.cpp)
+add_library(burst_merger src/burst_merger.cpp)
+target_link_libraries(burst_creator buffer_spike_detector burst_checker burst_merger ${catkin_LIBRARIES})
 
-## Declare a cpp executable
-# add_executable(burst_calc_node src/burst_calc_node.cpp)
-
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-# add_dependencies(burst_calc_node burst_calc_generate_messages_cpp)
-
-## Specify libraries to link a library or executable target against
-# target_link_libraries(burst_calc_node
-#   ${catkin_LIBRARIES}
-# )
+# CAT creator
+add_executable(cat_creator src/cat_creator.cpp)
+target_link_libraries(cat_creator ${catkin_LIBRARIES})
 
 #############
 ## Install ##

@@ -81,10 +81,8 @@ catkin_package(
 ## Build ##
 ###########
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-# include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -94,16 +92,8 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-# add_executable(time_server_node src/time_server_node.cpp)
-
-## Add cmake target dependencies of the executable/library
-## as an example, message headers may need to be generated before nodes
-# add_dependencies(time_server_node time_server_generate_messages_cpp)
-
-## Specify libraries to link a library or executable target against
-# target_link_libraries(time_server_node
-#   ${catkin_LIBRARIES}
-# )
+add_executable(time_server src/time_server.cpp)
+target_link_libraries(time_server ${catkin_LIBRARIES})
 
 #############
 ## Install ##
