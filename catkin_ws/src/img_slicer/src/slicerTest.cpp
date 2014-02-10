@@ -8,7 +8,7 @@
 #include "ros/ros.h"
 #include <stdint.h>
 #include "img_slicer/ImageSlicer.h"
-#include "../../../common/PracticalSocket.h"
+#include "PracticalSocket.h"
 #include <plotter.h>
 #include <vector>
 #include <cstdlib>

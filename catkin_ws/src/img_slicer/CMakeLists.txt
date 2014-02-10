@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   common_libs
   zanni
   message_generation
+  cv_bridge
 )
 
 ## System dependencies are found with CMake's conventions
@@ -98,11 +99,12 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+find_package(OpenCV REQUIRED)
 add_executable(img_slicer src/ImageSlicer.cpp)
-target_link_libraries(img_slicer ${catkin_LIBRARIES} opencv)
+target_link_libraries(img_slicer ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 add_executable(slicer_test src/slicerTest.cpp)
-target_link_libraries(slicer_test plotter Xaw Xmu Xt SM ICE Xext X11 png z m practical_socket ${catkin_LIBRARIES})
+target_link_libraries(slicer_test plotter Xaw Xmu Xt SM ICE Xext X11 png z m ${catkin_LIBRARIES})
 
 include_directories(${catkin_INCLUDE_DIRS})
 add_executable(zanni_slices src/slicerToZanni.cpp)
