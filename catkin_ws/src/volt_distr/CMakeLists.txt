@@ -6,6 +6,7 @@ project(volt_distr)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  neuro_recv  
 )
 
 ## System dependencies are found with CMake's conventions
@@ -92,6 +93,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -111,6 +113,12 @@ include_directories(
 # target_link_libraries(volt_distr_node
 #   ${catkin_LIBRARIES}
 # )
+
+add_executable(volt_distr src/volt_distr.cpp)
+add_library(volt_distr_creator src/volt_distr_creator.cpp)
+add_library(volt_distr_viz src/volt_distr_viz.cpp)
+target_link_libraries(volt_distr_viz plotter Xaw Xmu Xt SM ICE Xext X11 png z m ${catkin_LIBRARIES})
+target_link_libraries(volt_distr volt_distr_creator volt_distr_viz ${catkin_LIBRARIES})
 
 #############
 ## Install ##
