@@ -4,12 +4,12 @@
  * Author: Jonathan Hasenzahl
  */
 
-#include "teleop_arm_dish.h"
+#include "arm/teleop_arm_dish.h"
 #include "arm/cartesian_move.h"
 #include "arm/cartesian_moves.h"
 #include "arm/constant_move_time.h"
 #include "time_server/time_srv.h"
-#include "movement_definitions.h"
+#include "arm/movement_definitions.h"
 #include <cmath>
 
 #define MIDPOINT 4.5

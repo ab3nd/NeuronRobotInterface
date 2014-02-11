@@ -8,7 +8,7 @@
 #include "ros/ros.h"
 #include "neuro_recv/dish_state.h"
 //#include "neuro_recv/sample.h"
-#include "../../../common/PracticalSocket.h" // For UDPSocket and SocketException
+#include "common_libs/PracticalSocket.h" // For UDPSocket and SocketException
 #include <cstring>
 #include <stdint.h>
 #include <endian.h>
