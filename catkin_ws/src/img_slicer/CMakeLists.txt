@@ -81,7 +81,7 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES img_slicer
 #  CATKIN_DEPENDS roscpp
 #  DEPENDS system_lib
@@ -101,13 +101,16 @@ include_directories(
 
 find_package(OpenCV REQUIRED)
 add_executable(img_slicer src/ImageSlicer.cpp)
+add_dependencies(img_slicer img_slicer_generate_messages)
 target_link_libraries(img_slicer ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 add_executable(slicer_test src/slicerTest.cpp)
+add_dependencies(slicer_test img_slicer_generate_messages)
 target_link_libraries(slicer_test plotter Xaw Xmu Xt SM ICE Xext X11 png z m ${catkin_LIBRARIES})
 
 include_directories(${catkin_INCLUDE_DIRS})
 add_executable(zanni_slices src/slicerToZanni.cpp)
+add_dependencies(zanni_slices img_slicer_generate_messages)
 target_link_libraries(zanni_slices plotter Xaw Xmu Xt SM ICE Xext X11 png z m ${catkin_LIBRARIES})
 
 #############

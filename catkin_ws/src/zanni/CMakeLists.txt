@@ -50,7 +50,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+   INCLUDE_DIRS include
 #  LIBRARIES zanni
    CATKIN_DEPENDS roscpp std_msgs message_runtime
 #  DEPENDS system_lib
@@ -76,19 +76,22 @@ include_directories(
 ## Declare a cpp executable
 # The dish reader and publisher
 add_executable(zanni src/zanni.cpp)
-add_dependencies(zanni ${catkin_EXPORTED_TARGETS})
+add_dependencies(zanni ${catkin_EXPORTED_TARGETS} zanni_generate_messages)
 target_link_libraries(zanni ${catkin_LIBRARIES} comedi)
 
 # The stimulation server
 add_executable(zanni_stim_server src/zanni_stim.cpp)
+add_dependencies(zanni_stim_server ${catkin_EXPORTED_TARGETS})
 target_link_libraries(zanni_stim_server ${catkin_LIBRARIES} comedi)
 
 # A test listener for the dish reader
 add_executable(zanni_listener src/zanni_listener.cpp)
+add_dependencies(zanni_listener ${catkin_EXPORTED_TARGETS} zanni_generate_messages)
 target_link_libraries(zanni_listener ${catkin_LIBRARIES} ncurses)
 
 # A test client for the stimulation server
 add_executable(zanni_stim_client src/zanni_stim_client.cpp)
+add_dependencies(zanni_stim_client ${catkin_EXPORTED_TARGETS})
 target_link_libraries(zanni_stim_client ${catkin_LIBRARIES})
 
 # Translator into dish states for arm control

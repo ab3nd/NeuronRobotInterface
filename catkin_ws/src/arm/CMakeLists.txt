@@ -79,6 +79,8 @@ include_directories(include)
 
 ## Part that actually controls the movement of the arm
 add_executable(arm_control src/arm_control.cpp)
+add_dependencies(arm_control burst_calc_generate_messages)
+add_dependencies(arm_control arm_generate_messages)
 target_link_libraries(arm_control ${catkin_LIBRARIES})
 
 add_library(ManusArm src/ManusArm.cpp)
@@ -86,10 +88,14 @@ target_link_libraries(arm_control ManusArm)
 
 ## Control the arm from the keyboard
 add_executable(teleop_arm_key src/teleop_arm_key.cpp)
+add_dependencies(teleop_arm_key burst_calc_generate_messages)
+add_dependencies(teleop_arm_key arm_generate_messages)
 target_link_libraries(teleop_arm_key ${catkin_LIBRARIES})
 
 ## Control the arm from a MEA
 add_executable(teleop_arm_dish src/teleop_arm_dish.cpp)
+add_dependencies(teleop_arm_dish burst_calc_generate_messages)
+add_dependencies(teleop_arm_dish arm_generate_messages)
 target_link_libraries(teleop_arm_dish ${catkin_LIBRARIES})
 
 

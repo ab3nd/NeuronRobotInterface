@@ -73,7 +73,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES time_server
-#  CATKIN_DEPENDS roscpp
+  CATKIN_DEPENDS roscpp message_runtime
 #  DEPENDS system_lib
 )
 
@@ -86,13 +86,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a cpp library
-# add_library(time_server
-#   src/${PROJECT_NAME}/time_server.cpp
-# )
-
 ## Declare a cpp executable
 add_executable(time_server src/time_server.cpp)
+add_dependencies(time_server time_server_generate_messages)
 target_link_libraries(time_server ${catkin_LIBRARIES})
 
 #############
