@@ -42,14 +42,17 @@ include_directories(
 
 # The burst creator
 add_executable(burst_creator src/burst_creator.cpp)
-add_dependencies(burst_creator neuro_recv_generate_messages_cpp)
+add_dependencies(burst_creator neuro_recv_generate_messages)
 add_library(buffer_spike_detector src/buffer_spike_detector.cpp)
+add_dependencies(buffer_spike_detector neuro_recv_generate_messages)
 add_library(burst_checker src/burst_checker.cpp)
+add_dependencies(burst_checker neuro_recv_generate_messages)
 add_library(burst_merger src/burst_merger.cpp)
+add_dependencies(burst_merger neuro_recv_generate_messages)
 target_link_libraries(burst_creator buffer_spike_detector burst_checker burst_merger ${catkin_LIBRARIES})
 
 # CAT creator
 add_executable(cat_creator src/cat_creator.cpp)
-add_dependencies(cat_creator neuro_recv_generate_messages_cpp)
+add_dependencies(cat_creator neuro_recv_generate_messages)
 target_link_libraries(cat_creator ${catkin_LIBRARIES})
 

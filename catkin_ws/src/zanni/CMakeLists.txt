@@ -91,12 +91,13 @@ target_link_libraries(zanni_listener ${catkin_LIBRARIES} ncurses)
 
 # A test client for the stimulation server
 add_executable(zanni_stim_client src/zanni_stim_client.cpp)
-add_dependencies(zanni_stim_client ${catkin_EXPORTED_TARGETS})
+add_dependencies(zanni_stim_client ${catkin_EXPORTED_TARGETS} )
 target_link_libraries(zanni_stim_client ${catkin_LIBRARIES})
 
 # Translator into dish states for arm control
-include_directories("../../../../arm_project/neuro_recv/msg_gen/cpp/include/")
+#include_directories("../../../../arm_project/neuro_recv/msg_gen/cpp/include/")
 add_executable(zanni_translate src/zanni_to_dishstate.cpp)
+add_dependencies(zanni_translate ${catkin_EXPORTED_TARGETS} zanni_generate_messages)
 target_link_libraries(zanni_translate ${catkin_LIBRARIES})
 
 ## Specify libraries to link a library or executable target against
