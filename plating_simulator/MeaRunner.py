@@ -12,11 +12,46 @@ import ConfigParser
 from brian.library.IF import *
 import random
 import PhysicalDish
+import StimData
 import re
+import argparse
 
-class meaRunner():
+
+            
+class stimScheduler:
     
-    def __init__(self, cFile, lFile, configFile):
+    def __init__(self, config):
+        #Get the runtime in seconds
+        self.timeLen = config.getfloat("runtime", "run_len") * second
+        self.sampleRate = config.getfloat("runtime", "stim_sample_rate")
+        self.sampleLen = int(self.timeLen/self.sampleRate)
+        self.schedules = {}
+        self.updateMethod = None
+    
+    #Add a stimulation consisting of the values in data, applied to channel channel, starting at offset seconds  
+    #Offset should be in floating point seconds into the runtime. 
+    def add(self, data, channel, offset):
+        #Create an empty stimulation channel 
+        if not channel in self.schedules.keys():
+            self.schedules[channel] = [0] * self.sampleLen 
+            
+        #Calculate the offset in samples
+        sOffset = int(offset * self.sampleRate)
+        
+        #Trim data to fit
+        overage = (len(data) + sOffset) - len(self.schedules[channel])
+        if overage > 0: 
+            data = data[0:len(data) - overage]
+        
+        #Copy the data into the schedule at the proper offset
+        self.schedules[channel][sOffset:sOffset+len(data)] = data[:]    
+        
+class meaRunner:
+    
+    def __init__(self, cFile, lFile, config):
+        #As was loaded from file
+        self.config = config
+        
         #Load the connections and locations of the neurons
         #Connections are stored as a list of (a,b) tuples, which indicate that 
         #the neuron with ID a synapses onto the neuron with ID b. 
@@ -35,10 +70,6 @@ class meaRunner():
         self.file_date_short = "{0}/{1}/{2}".format(days[0], days[1], days[2])
         mins = days[3].split(":")
         self.file_time = "{0}:{1}:{2}.{3}".format(mins[0], mins[1], mins[2], 0.0)
-    
-        #Load the configuration from the config file
-        self.config = ConfigParser.ConfigParser()
-        self.config.readfp(open(configFile))
         
         #Build a physical representation of the dish
         self.physDish = PhysicalDish.PhysicalLayout(self.config)
@@ -58,6 +89,12 @@ class meaRunner():
         #The which pads are near which neurons
         self.pad_neuron_map = None
         
+        #Stimulus schedule, if this remains None, no stim will be delivered
+        self.stimSchedule = None
+    
+    def setStimSchedule(self, stimSched):
+        self.stimSchedule = stimSched
+            
     def runSim(self):
         
         if self.pad_neuron_map is None:
@@ -113,6 +150,10 @@ class meaRunner():
         
         M = SpikeMonitor(self.culture)
         
+        #Start up the stimulation scheduler
+        if self.stimSchedule is not None:
+            self.stimSchedule.begin()
+        
         #Do the actual run
         #TODO: This can't be separated into a different function without Brian failing
         print "running simulation...",
@@ -134,7 +175,7 @@ class meaRunner():
         for pad_x in xrange(0,pad_rows):
             for pad_y in xrange (0,pad_cols):
                 #Had some ignore-corners code here, but we can't ignore the corners, because those are our
-                #ground reference points
+                #ground reference pointse
                 
                 #Get the location of the pad  
                 pad_location = self.physDish.getPadLocation(pad_x, pad_y)
@@ -233,10 +274,30 @@ X_Value\tVoltage_0 (Filtered)\tVoltage_1 (Filtered)\tVoltage_2 (Filtered)\tVolta
 
 def main():
     #Initialize the connections and neuron locations from files
-    connFile = "./connections_2013-11-20-11:28:7.pickle"
-    locFile = "./locations_2013-11-20-11:28:7.pickle"
+    argp = argparse.ArgumentParser(description='Run a culture simulation based on connection and layout files')
+    argp.add_argument('-c', dest='conn_path')
+    argp.add_argument('-l', dest='loc_path')
+    args = argp.parse_args()
+    
+    #Get the connection file name
+    connFile = args.conn_path
+    #Get the location file name
+    locFile = args.loc_path
+     
     configFile = "./basic_sim.cfg"
-    mr = meaRunner(connFile, locFile, configFile)
+    
+    #Load the configuration from the config file
+    config = ConfigParser.ConfigParser()
+    config.readfp(open(configFile))
+    
+    #Create a stim scheduler
+    ss = stimScheduler(config)
+    #Schedule a stimulation
+    ss.add(StimData.training_signal, 3, 1)
+    
+    #Create the runner and add the stims
+    mr = meaRunner(connFile, locFile, config)
+    mr.setStimSchedule(ss)
     mr.runSim()
     
     
