@@ -45,7 +45,10 @@ class stimScheduler:
         
         #Copy the data into the schedule at the proper offset
         self.schedules[channel][sOffset:sOffset+len(data)] = data[:]    
-        
+    
+    def nextStimState(self):
+        print "LOL TEST"
+    
 class meaRunner:
     
     def __init__(self, cFile, lFile, config):
@@ -91,7 +94,7 @@ class meaRunner:
         
         #Stimulus schedule, if this remains None, no stim will be delivered
         self.stimSchedule = None
-    
+
     def setStimSchedule(self, stimSched):
         self.stimSchedule = stimSched
             
@@ -152,8 +155,13 @@ class meaRunner:
         
         #Start up the stimulation scheduler
         if self.stimSchedule is not None:
-            self.stimSchedule.begin()
-        
+            #Set up a network_operation to get updates from the stim scheduler
+            #Stimulation data was recorded at 1k-sample/second
+            stimClock=Clock(dt=1*ms)
+            @network_operation(stimClock)
+            def updateStim():
+                self.stimSchedule.nextStimState()
+                
         #Do the actual run
         #TODO: This can't be separated into a different function without Brian failing
         print "running simulation...",

@@ -1,4 +1,12 @@
+#!/usr/bin/python
+#Mostly from http://briansimulator.org/demo/
 from brian import *
+from brian.network import network_operation
+
+@network_operation
+def printMessage():
+    print "LOL MESSAGE"
+
 # Network parameters
 N = 5000
 Vr = 10 * mV
