@@ -49,7 +49,34 @@ class PhysicalLayout:
         #Assumes dish is square and pad is centered in it
         self.pad_top = (dish_width - pad_array_width)/2
         self.pad_left = (dish_width - pad_array_height)/2
-                
+    
+        #Lookup table for channels to pad grid locations
+        #The pads are an 8x8 grid, numbered like this:
+        #    0  1  2  3  4  5  6  7  So (0,0) is on the top left
+        #  0 *  1  2  3  4  5  6  *  
+        #  1 7  8  9  10 11 12 13 14 
+        #  2 15 16 17 18 19 20 21 22 
+        #  3 23 24 25 26 27 28 29 30 
+        #  4 31 32 33 34 35 36 37 38 
+        #  5 39 40 41 42 43 44 45 46  
+        #  6 47 48 49 50 51 52 53 54 
+        #  7 *  55 56 57 58 59 60 *
+        self.padLookup ={         1:(1,0), 2:(2,0), 3:(3,0), 4:(4,0), 5:(5,0), 6:(6,0), 
+                         7:(1,0), 8:(2,0), 9:(3,0), 10:(4,0), 11:(5,0), 12:(6,0), 13:(5,0), 14:(6,0),
+                         15:(1,0), 16:(2,0), 17:(3,0), 18:(4,0), 19:(5,0), 20:(6,0), 21:(5,0), 22:(6,0),
+                         23:(1,0), 24:(2,0), 25:(3,0), 26:(4,0), 27:(5,0), 28:(6,0), 29:(5,0), 30:(6,0),
+                         31:(1,0), 32:(2,0), 33:(3,0), 34:(4,0), 35:(5,0), 36:(6,0), 37:(5,0), 38:(6,0),
+                         39:(1,0), 40:(2,0), 41:(3,0), 42:(4,0), 43:(5,0), 44:(6,0), 45:(5,0), 46:(6,0),
+                         47:(1,0), 48:(2,0), 49:(3,0), 50:(4,0), 51:(5,0), 52:(6,0), 53:(5,0), 54:(6,0),
+                                  55:(2,0), 56:(3,0), 57:(4,0), 58:(5,0), 59:(6,0), 60:(5,0)}
+        
+    def channelToPad(self, channel):
+        try:
+            return self.padLookup[channel]
+        except KeyError:
+            print "Asked to get pad for invalid channel {0}".format(channel)
+            exit(-1)
+                     
     #Given a pad grid location, convert it to a culture grid location. 
     #The pads are usually an 8x8 grid, numbered like this:
     #    0 1 2 3 4 5 6 7  So (0,0) is on the top left

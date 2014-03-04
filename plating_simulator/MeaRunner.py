@@ -15,7 +15,7 @@ import PhysicalDish
 import StimData
 import re
 import argparse
-
+import os
 
             
 class stimScheduler:
@@ -24,9 +24,10 @@ class stimScheduler:
         #Get the runtime in seconds
         self.timeLen = config.getfloat("runtime", "run_len") * second
         self.sampleRate = config.getfloat("runtime", "stim_sample_rate")
-        self.sampleLen = int(self.timeLen/self.sampleRate)
+        self.sampleLen = int(self.timeLen*self.sampleRate)
         self.schedules = {}
         self.updateMethod = None
+        self.sampleIndex = 0;
     
     #Add a stimulation consisting of the values in data, applied to channel channel, starting at offset seconds  
     #Offset should be in floating point seconds into the runtime. 
@@ -34,7 +35,7 @@ class stimScheduler:
         #Create an empty stimulation channel 
         if not channel in self.schedules.keys():
             self.schedules[channel] = [0] * self.sampleLen 
-            
+        
         #Calculate the offset in samples
         sOffset = int(offset * self.sampleRate)
         
@@ -47,7 +48,15 @@ class stimScheduler:
         self.schedules[channel][sOffset:sOffset+len(data)] = data[:]    
     
     def nextStimState(self):
-        print "LOL TEST"
+        #Generate a list of (channel, voltage) pairs
+        currentStates = []
+        for channel in self.schedules.keys():
+            currentStates.append((channel, self.schedules[channel][self.sampleIndex]))
+        self.sampleIndex += 1
+        #Don't run off the end of the schedule
+        if self.sampleIndex > self.sampleLen:
+            self.sampleIndex = self.sampleLen
+        return currentStates
     
 class meaRunner:
     
@@ -155,12 +164,34 @@ class meaRunner:
         
         #Start up the stimulation scheduler
         if self.stimSchedule is not None:
+            #Set up a cache for which neurons are near stimulated pads
+            stimNeurons = {}
+            
             #Set up a network_operation to get updates from the stim scheduler
             #Stimulation data was recorded at 1k-sample/second
             stimClock=Clock(dt=1*ms)
             @network_operation(stimClock)
             def updateStim():
-                self.stimSchedule.nextStimState()
+                chVoltages = self.stimSchedule.nextStimState()
+                if not stimNeurons.keys(): 
+                    for channel, voltage in chVoltages:
+                        #Get the neurons near that pad
+                        x,y = self.physDish.channelToPad(channel)
+                        x,y = self.physDish.getPadLocation(x, y)
+                        stimNeurons[channel] = self.physDish.getNeighbors((x,y), self.config.getint("mea", "sensing_range"))
+                #Add voltage based on their distance from the pad
+                for channel, voltage in chVoltages:
+                    neuronIDs = stimNeurons[channel]
+                    for nID in neuronIDs:
+                        #Get the distance
+                        x, y = self.physDish.channelToPad(channel)
+                        dist = self.physDish.euclidDist(self.physDish.getLocation(nID), self.physDish.getPadLocation(x,y))
+                        #Inverse square law, if the distance is zero, this is just the voltage
+                        vNeuron = voltage * (float(1.0)/((dist**2) +1.0))
+                        #Apply the voltage
+                        self.culture[nID].v += vNeuron
+                        
+                        
                 
         #Do the actual run
         #TODO: This can't be separated into a different function without Brian failing
@@ -204,8 +235,15 @@ class meaRunner:
         pad_rows = self.config.getint("mea", "pad_rows")
         pad_cols = self.config.getint("mea", "pad_cols")
 
+        fname = "./labview_{0}.lvm".format(self.file_date)
+        count = 1
+        #Find a file name that's not taken
+        while os.path.isfile(fname):
+            fname = "./labview_{0}_{1}.lvm".format(self.file_date, count)
+            count += 1
+        
         # Write a log file in the labview format
-        with open("./labview_{0}.lvm".format(self.file_date), "w") as outfile:
+        with open(fname, "w") as outfile:
             outfile.write(
 '''LabVIEW Measurement\t
 Writer_Version\t2
@@ -300,8 +338,35 @@ def main():
     
     #Create a stim scheduler
     ss = stimScheduler(config)
-    #Schedule a stimulation
-    ss.add(StimData.training_signal, 3, 1)
+    #Schedule stimulations on channels 47 and 54
+    #2.5 second no stim
+    ss.add(StimData.training_signal, 47, 2.5)
+    ss.add(StimData.training_signal, 47, 3.5)
+    ss.add(StimData.training_signal, 47, 4.5)
+    ss.add(StimData.training_signal, 47, 5.5)
+    ss.add(StimData.training_signal, 47, 6.5)
+    #1 second for stim to end
+    #2.5 second no stim
+    ss.add(StimData.training_signal, 54, 10)
+    ss.add(StimData.training_signal, 54, 11)
+    ss.add(StimData.training_signal, 54, 12)
+    ss.add(StimData.training_signal, 54, 13)
+    ss.add(StimData.training_signal, 54, 14)
+    #1 second for stim to end
+    #2.5 second no stim
+    ss.add(StimData.training_signal, 47, 17.5)
+    ss.add(StimData.training_signal, 47, 18.5)
+    ss.add(StimData.training_signal, 47, 19.5)
+    ss.add(StimData.training_signal, 47, 20.5)
+    ss.add(StimData.training_signal, 47, 21.5)
+    #1 second for stim to end
+    #2.5 second no stim
+    ss.add(StimData.training_signal, 54, 25)
+    ss.add(StimData.training_signal, 54, 26)
+    ss.add(StimData.training_signal, 54, 27)
+    ss.add(StimData.training_signal, 54, 28)
+    ss.add(StimData.training_signal, 54, 29)
+    
     
     #Create the runner and add the stims
     mr = meaRunner(connFile, locFile, config)
