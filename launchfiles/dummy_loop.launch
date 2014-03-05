@@ -1,0 +1,25 @@
+<launch>
+   <rosparam command="load" file="./dummy.yaml"/>
+   
+   <!-- Start the node that creates dish_state messages from an LVM file -->
+   <node pkg="zanni" type="zanni_fake" name="zanni_to_dishstate"/>
+
+   <!-- Time Server -->
+   <!-- <node pkg="time_server" name="time_server" type="time_server"/> -->   
+   
+   <!-- ARM Control talks to the arm hardware -->   
+   <node pkg="arm" name="arm_control" type="arm_control"/>
+         
+   <!-- Burst creator receives dish states and detects bursts of activity -->
+   <!-- <node pkg="burst_calc" name="burst_creator" type="burst_creator"/> -->
+
+   <!-- CAT Creator invents felines. Actually, it gets the activity bursts and creates motion commands for the ARM -->
+   <!-- <node pkg="burst_calc" name="cat_creator" type="cat_creator"/> -->
+   
+   <!-- Activation Vector controller takes in dish states and sends out motion commands. It replaces the CAT control scheme. -->
+   <node pkg="activation_vector" name="act_vector" type="act_vector"/>
+   
+   <!-- Dish/ARM Teleop receives motion commands and ships them out over the CAN bus to move the arm -->
+   <node pkg="arm" name="teleop_arm_dish" type="teleop_arm_dish"/>
+
+</launch>
