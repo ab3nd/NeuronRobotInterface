@@ -6,6 +6,7 @@ import labviewloader
 import plotdish
 import numpy
 import pygame
+import os
                 
 if __name__ == '__main__':
     
@@ -16,7 +17,7 @@ if __name__ == '__main__':
 
     #Create a filename to save the output to
     basename = os.path.basename(infile).split(".")[0]
-    imageName = basename + "-voltages.png"
+    imageName = basename + "-voltages"
     
     #Collect all the data for each channel
     allData = []    
