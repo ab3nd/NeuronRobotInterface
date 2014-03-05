@@ -6,7 +6,7 @@ project(img_slicer)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  #common_libs
+  practical_socket
   zanni
   message_generation
   cv_bridge
@@ -105,7 +105,7 @@ add_dependencies(img_slicer img_slicer_generate_messages)
 target_link_libraries(img_slicer ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 add_executable(slicer_test src/slicerTest.cpp)
-add_dependencies(slicer_test img_slicer_generate_messages)
+add_dependencies(slicer_test img_slicer_generate_messages practical_socket)
 target_link_libraries(slicer_test plotter Xaw Xmu Xt SM ICE Xext X11 png z m ${catkin_LIBRARIES})
 
 include_directories(${catkin_INCLUDE_DIRS})

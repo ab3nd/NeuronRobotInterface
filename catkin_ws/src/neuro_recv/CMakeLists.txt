@@ -4,9 +4,9 @@ project(neuro_recv)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-# Removed common_libs
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  practical_socket
   message_generation
 )
 
@@ -54,14 +54,14 @@ include_directories(
 # for this node before building the code. 
 # Yes, catkin is a shitshow. 
 add_executable(net_recv src/net_recv.cpp)
-add_dependencies(net_recv neuro_recv_generate_messages)
+add_dependencies(net_recv neuro_recv_generate_messages practical_socket)
 target_link_libraries(net_recv ${catkin_LIBRARIES})
 
 add_executable(csv_recv src/csv_recv.cpp)
-add_dependencies(csv_recv neuro_recv_generate_messages)
+add_dependencies(csv_recv neuro_recv_generate_messages practical_socket)
 target_link_libraries(csv_recv ${catkin_LIBRARIES})
 
 add_executable(mock_recv src/mock_recv.cpp)
-add_dependencies(mock_recv neuro_recv_generate_messages)
+add_dependencies(mock_recv neuro_recv_generate_messages practical_socket)
 target_link_libraries(mock_recv ${catkin_LIBRARIES})
 

@@ -4,8 +4,8 @@
  * Author: Jonathan Hasenzahl
  */
 
-#include "arm/teleop_arm_key.h"
-#include "arm/movement_definitions.h"
+#include "teleop_arm_key.h"
+#include "movement_definitions.h"
 #include <signal.h>
 #include <termios.h>
 #include <stdio.h>

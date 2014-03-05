@@ -9,7 +9,7 @@
 #include "arm/cartesian_moves.h"
 #include "arm/constant_move.h"
 #include "arm/constant_move_time.h"
-#include "arm/movement_definitions.h"
+#include "movement_definitions.h"
 #include <vector>
 #include <cmath>
 
