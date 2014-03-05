@@ -50,7 +50,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-   INCLUDE_DIRS include
+#   INCLUDE_DIRS include
 #  LIBRARIES zanni
    CATKIN_DEPENDS roscpp std_msgs message_runtime
 #  DEPENDS system_lib
@@ -99,6 +99,12 @@ target_link_libraries(zanni_stim_client ${catkin_LIBRARIES})
 add_executable(zanni_translate src/zanni_to_dishstate.cpp)
 add_dependencies(zanni_translate ${catkin_EXPORTED_TARGETS} zanni_generate_messages)
 target_link_libraries(zanni_translate ${catkin_LIBRARIES})
+
+# Loads LVM files and uses those to fake zanni data
+add_executable(zanni_fake src/lvm_to_dishstate.cpp)
+add_dependencies(zanni_fake ${catkin_EXPORTED_TARGETS} zanni_generate_messages)
+target_link_libraries(zanni_fake ${catkin_LIBRARIES})
+
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(zanni_node

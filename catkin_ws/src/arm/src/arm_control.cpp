@@ -4,7 +4,7 @@
  * Author: Jonathan Hasenzahl
  */
 
-#include "arm/arm_control.h"
+#include "arm_control.h"
 #include <cstdio>
 #include <cmath>
 

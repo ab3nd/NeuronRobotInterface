@@ -6,7 +6,7 @@ project(img_slicer)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  common_libs
+  #common_libs
   zanni
   message_generation
   cv_bridge

@@ -4,9 +4,9 @@ project(neuro_recv)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+# Removed common_libs
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  common_libs
   message_generation
 )
 
