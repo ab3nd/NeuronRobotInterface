@@ -9,4 +9,4 @@ stdev_mult: 2
 burst_window: 100
 
 # Path of the LVM file to load
-lvm_file_path: /home/ams/Projects/neurobotics/experiments/divided_virtual_culture/labview_2014-2-27-13:31:26_11.lvm
+lvm_file_path: /home/ams/Projects/neurobotics/experiments/divided_virtual_culture/labview_2014-2-27-13:31:26_9.lvm
