@@ -333,8 +333,8 @@ def main():
                 current_hood += outConnect * 3
                 #print "{0} x {0}, {1} connections left".format(current_hood, outConnect)
                 
-    print "done."
-        
+    print "done."    
+    
     #Done building terrible huge list with a time consuming process. Pickle the results.
     print "Saving connectivity...", 
     now = datetime.now()
@@ -364,6 +364,22 @@ def main():
         
     print "done."
     
+    print "Selecting excitatory and inhibitory connections...",
+    #Partition the total number of neurons
+    neuronCount = phys_dish.getCellCount()
+    inhib_count = int(neuronCount * config.getfloat("population","inhibitory_rate")/100)
+    excitory_count = neuronCount - inhib_count
+    
+    #Assign neuron IDs to the excitatory and inhibitory neurons
+    #Put it in a convenient hash and save it. 
+    neuronGroups = {} 
+    neuronGroups["inhib"] = random.sample(xrange(neuronCount), inhib_count)
+    neuronGroups["excite"] = list(set(xrange(neuronCount)) - set(neuronGroups["inhib"]))
+    with open("./neuron_types_{0}.pickle".format(file_date), "w") as outfile:
+        Pickler(outfile, 0).dump(neuronGroups)
+        outfile.close()
+    print "done"
+
                 
 if __name__ == '__main__':
     main()
