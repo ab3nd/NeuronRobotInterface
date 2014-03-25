@@ -33,7 +33,7 @@ import random
 from pprint import pprint
 import Image
 import ConfigParser
-
+sys.path.append("../common")
 import PhysicalDish
 #Just for timing execution to find slow parts
 from datetime import datetime

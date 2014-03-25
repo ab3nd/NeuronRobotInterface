@@ -11,6 +11,7 @@ from brian import *
 import ConfigParser
 from brian.library.IF import *
 import random
+sys.path.append("../common")
 import PhysicalDish
 import StimData
 import re
