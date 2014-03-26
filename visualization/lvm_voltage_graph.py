@@ -23,7 +23,8 @@ if __name__ == '__main__':
     allData = []    
     for ii in xrange(60):
         data = ll.getDataCol(ii)
-        allData.append(data)
+        #allData.append(data)
+        allData.append(data[250:])
         
     #Plot all the voltages
     plotdish.plotdish(allData, imageName)
