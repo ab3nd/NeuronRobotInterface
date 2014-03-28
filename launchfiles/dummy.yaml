@@ -1,6 +1,6 @@
 # Parameters for faked runs loaded from an LVM file
 # Number of dishes to use to get spike threshold and baseline values
-buffer_size: 100
+buffer_size: 200
 
 # Multiplier of the standard deviation when determining spike threshold
 stdev_mult: 2
@@ -9,4 +9,5 @@ stdev_mult: 2
 burst_window: 100
 
 # Path of the LVM file to load
-lvm_file_path: /home/ams/Projects/neurobotics/experiments/divided_virtual_culture/labview_2014-2-27-13:31:26_9.lvm
+#lvm_file_path: /home/ams/Projects/neurobotics/experiments/divided_virtual_culture/labview_2014-2-27-13:31:26_9.lvm
+lvm_file_path: /home/ams/Projects/neurobotics/plating_simulator/labview_2014-3-18-12:22:52_6.lvm
