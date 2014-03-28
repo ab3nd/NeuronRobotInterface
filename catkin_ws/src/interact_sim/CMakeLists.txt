@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   img_slicer
+  neuro_recv
 )
 
 ## System dependencies are found with CMake's conventions

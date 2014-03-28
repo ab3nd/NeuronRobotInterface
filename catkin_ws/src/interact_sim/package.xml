@@ -46,7 +46,8 @@
   <run_depend>std_msgs</run_depend>
   <build_depend>img_slicer</build_depend>
   <run_depend>img_slicer</run_depend>
-
+  <build_depend>neuro_recv</build_depend>
+  <run_depend>neuro_recv</run_depend>
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- You can specify that this package is a metapackage here: -->

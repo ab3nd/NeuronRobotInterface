@@ -145,7 +145,7 @@ class imageHandler:
             if column > 800:
                 return True
         return False
-            
+                    
 class meaRunner:
     
     def __init__(self, tFile, cFile, lFile, config):
@@ -197,9 +197,21 @@ class meaRunner:
         #Stimulus schedule, if this remains None, no stim will be delivered
         self.stimSchedule = None
 
+        #Use an image handler to update dynamic stim scheduler. 
+        #TODO this is bad OO design, but expedient
+        self.imgHandler = None
+        
+        #self.plateSender = None
+        
     def setStimSchedule(self, stimSched):
         self.stimSchedule = stimSched
-            
+    
+    def setImageHandler(self, hndlr):
+        self.imgHandler = hndlr
+    
+    #def setPlateSender(self, sender):
+    #    self.plateSender = sender
+        
     def runSim(self):
         
         if self.pad_neuron_map is None:
@@ -278,6 +290,7 @@ class meaRunner:
         
         M = SpikeMonitor(self.culture)
         
+        
         #Start up the stimulation scheduler
         if self.stimSchedule is not None:
             #Set up a cache for which neurons are near stimulated pads
@@ -289,8 +302,8 @@ class meaRunner:
             @network_operation(stimClock)
             def updateStim():
                 chVoltages = self.stimSchedule.nextStimState()
-                if not stimNeurons.keys(): 
-                    for channel, voltage in chVoltages:
+                for channel, voltage in chVoltages:
+                    if channel not in stimNeurons.keys(): 
                         #Get the neurons near that pad
                         x,y = self.physDish.channelToPad(channel)
                         x,y = self.physDish.getPadLocation(x, y)
@@ -306,16 +319,31 @@ class meaRunner:
                         vNeuron = voltage * (float(1.0)/((dist**2) +1.0))
                         #Apply the voltage
                         self.culture[nID].vm += vNeuron
-                        
-                        
-                
+
+            #If we have an image handler to coordinate with the stimulator
+            #Note that these times are sim time, not real time                        
+            if self.imgHandler is not None:
+                imgUpdateClock=Clock(dt=1*ms)
+                @network_operation(imgUpdateClock)
+                def updateImage():
+                    self.imgHandler.update()
+                    if self.imgHandler.cupIsVisible():
+                         if self.imgHandler.cupIsLeft():
+                             self.stimSchedule.start(47)
+                         elif self.imgHandler.cupIsRight():
+                             self.stimSchedule.start(54)
+                 
         #Do the actual run
         #TODO: This can't be separated into a different function without Brian failing
         print "running simulation...",
+        #Set this up to have the voltages read out by the server
+        readClock=Clock(dt=1*ms)
+        server = RemoteControlServer(clock=readClock)
         run(self.config.getfloat("runtime", "run_len") * second)
         self.writeLabview(vMonitor)
         
     def buildPadNeuronMap(self):
+        print "Building pad -> neuron map..."
         #Get some configuration parameters to set which neurons are connected to which 
         #of the receiving pads of the MEA
         pad_rows = self.config.getint("mea", "pad_rows")
@@ -346,7 +374,8 @@ class meaRunner:
                     
                 #Add the list of close neurons to the current pad
                 self.pad_neuron_map[(pad_x, pad_y)] = ranged_neurons   
-
+        print "Done."
+        
     def writeLabview(self, vMonitor):
         pad_rows = self.config.getint("mea", "pad_rows")
         pad_cols = self.config.getint("mea", "pad_cols")
@@ -464,25 +493,15 @@ def main():
     
     #initalize a dynamic stimulator
     stim = dynamicScheduler()
-    
-    #Testing 
-    import time
-    while(True):
-        imgHandler.update()
-        if imgHandler.cupIsVisible():
-            if imgHandler.cupIsLeft():
-                stim.start(47)
-            elif imgHandler.cupIsRight():
-                stim.start(54)
-        #Run the stimulator ragged 
-        for ii in range(1010):
-            stim.nextStimState()
-        time.sleep(1)
         
+    #pSender = plateStateSender()
+    
     #Create the runner and add the stims
     mr = meaRunner(typeFile, connFile, locFile, config)
     mr.setStimSchedule(stim)
-#    mr.runSim()
+    mr.setImageHandler(imgHandler)
+    #mr.setPlateSender(pSender)
+    mr.runSim()
     
     
 
