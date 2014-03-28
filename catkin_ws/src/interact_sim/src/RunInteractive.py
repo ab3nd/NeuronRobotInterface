@@ -64,21 +64,88 @@ class stimScheduler:
             self.sampleIndex = self.sampleLen
         return currentStates
 
+
+class dynamicScheduler(stimScheduler):
+    
+    def __init__(self):
+        #Map of channels to their index in the stimulation waveform
+        self.channelIndicies = {}
+        #List of channels that are currently stimulating
+        self.stimulatingChannels = []
+
+    def start(self, channel):
+        #Don't start if already stimulating on that channel
+        if channel not in self.stimulatingChannels:
+            self.stimulatingChannels.append(channel)
+            self.channelIndicies[channel] = 0
+        
+    def nextStimState(self):
+        stoppedChannels = []
+        currentStates = []
+        for channel in self.stimulatingChannels:
+            #Increment the index
+            self.channelIndicies[channel] += 1
+            if self.channelIndicies[channel] >= len(StimData.training_signal):
+                #If we're done stimulating, add it to the removal list
+                stoppedChannels.append(channel)
+            else:
+                #Otherwise, get the next voltage and add it to the current states
+                currentStates.append((channel, StimData.training_signal[self.channelIndicies[channel]]))
+        
+        for channel in stoppedChannels:
+            if channel in self.stimulatingChannels:
+                self.stimulatingChannels.remove(channel)       
+        return currentStates
+
 class imageHandler:
     def __init__(self):
         print("Waiting for image service to come online")
         rospy.wait_for_service('red_px_counts')
         print("Image service online")
         self.counts = []
-    
+        self.leftCount = 0
+        self.rightCount = 0
+        self.isLeft = self.isRight = self.isCenter = False
+         
     def update(self):
         try:
             getRedPx = rospy.ServiceProxy('red_px_counts', ImageSlicer)
             self.counts = getRedPx(5)
-            print self.counts
         except rospy.ServiceException, e:
             print "Service call failed in RunInteractive: %s"%e
+        for ii in range(3):
+            self.leftCount += self.counts.pixelCount[ii]
+            self.rightCount += self.counts.pixelCount[4-ii]
+        if abs(self.leftCount - self.rightCount) < 500:
+            self.isLeft = False
+            self.isRight = False
+            self.isCenter = True
+        else:
+            if self.leftCount > self.rightCount:
+                self.isLeft = True
+                self.isRight = False
+                self.isCenter = False
+            else:
+                self.isLeft = False
+                self.isRight = True
+                self.isCenter = False
+            
+    def cupIsLeft(self):
+        return self.isLeft
         
+    def cupIsRight(self):
+        return self.isRight
+    
+    def cupIsCenter(self):
+        return self.isCenter
+    
+    def cupIsVisible(self):
+        #See if there's a column with a lot of red in it
+        for column in self.counts.pixelCount:
+            if column > 800:
+                return True
+        return False
+            
 class meaRunner:
     
     def __init__(self, tFile, cFile, lFile, config):
@@ -392,38 +459,29 @@ def main():
     config = ConfigParser.ConfigParser()
     config.readfp(open(configFile))
     
-#     #Create a stim scheduler
-#     ss = stimScheduler(config)
-#     #Schedule stimulations on channels 47 and 54
-#     
-#     #Start with 5 seconds no stim
-#     offset = 5
-#     
-#     #20 seconds left
-#     for t in xrange(20):
-#         ss.add(StimData.training_signal, 47, offset)
-#         offset += 1
-#         
-#     #10 seconds no stim
-#     offset += 10
-#     
-#     #20 seconds right
-#     for t in xrange(20):
-#         ss.add(StimData.training_signal, 54, offset)
-#         offset += 1
-    
     #intialize an imageHandler    
     imgHandler = imageHandler()
+    
+    #initalize a dynamic stimulator
+    stim = dynamicScheduler()
     
     #Testing 
     import time
     while(True):
         imgHandler.update()
+        if imgHandler.cupIsVisible():
+            if imgHandler.cupIsLeft():
+                stim.start(47)
+            elif imgHandler.cupIsRight():
+                stim.start(54)
+        #Run the stimulator ragged 
+        for ii in range(1010):
+            stim.nextStimState()
         time.sleep(1)
         
     #Create the runner and add the stims
-#    mr = meaRunner(typeFile, connFile, locFile, config)
-#    mr.setStimSchedule(ss)
+    mr = meaRunner(typeFile, connFile, locFile, config)
+    mr.setStimSchedule(stim)
 #    mr.runSim()
     
     
