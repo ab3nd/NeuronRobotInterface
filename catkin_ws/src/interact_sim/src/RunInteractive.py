@@ -329,9 +329,9 @@ class meaRunner:
                     self.imgHandler.update()
                     if self.imgHandler.cupIsVisible():
                          if self.imgHandler.cupIsLeft():
-                             self.stimSchedule.start(47)
-                         elif self.imgHandler.cupIsRight():
                              self.stimSchedule.start(54)
+                         elif self.imgHandler.cupIsRight():
+                             self.stimSchedule.start(47)
                  
         #Do the actual run
         #TODO: This can't be separated into a different function without Brian failing
