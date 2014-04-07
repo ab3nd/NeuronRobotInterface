@@ -14,7 +14,7 @@ from matplotlib import cm
 import pdb
 #import stuff that I wrote
 import sliceTest as sl
-sys.path.append("../../common")
+sys.path.append("../common")
 import labviewloader
 import zero_mean_unit_norm as zmun
 
@@ -106,6 +106,7 @@ if __name__ == '__main__':
     #Break it into a list of lists, and that into a numpy array
 #     window_size = 20
 #     window_shift = 6
+    #import pdb; pdb.set_trace()
     input_data = sl.sliceList(data, window_size, window_shift)
     #sliceList includes any leftovers as the last item, so ditch that
     input_data.pop()
@@ -116,7 +117,9 @@ if __name__ == '__main__':
     
     #Try mean-shift clustering. I want something a little looser (so lower bandwidth, oddly) 
     #than the usual estimates, but not by a lot. 
-    bandwidth = estimate_bandwidth(dataArray, quantile=0.01, n_samples = 1000)
+    #bandwidth = estimate_bandwidth(dataArray, quantile=0.01, n_samples = 1000)
+    #For some reason, previous version got *** ValueError: zero-size array to maximum.reduce without identity
+    bandwidth = estimate_bandwidth(dataArray, quantile=0.01)
     print "Estimated bandwidth {0}".format(bandwidth)
     
     #Try mean-shift clustering
@@ -142,11 +145,11 @@ if __name__ == '__main__':
     counts.sort(key=lambda x: x[1])
     for item in counts:
         print item[0],",", item[1]
-        
+         
  
     renderClusters(labels_unique, labels, input_data)
     #renderFullSignal(data, deltaT, labels, input_data, window_size, window_shift)
-    exit()
+    
        
     #Convert the channel into a string of labels separated by commas
     strLabels = [str(x) for x in labels]

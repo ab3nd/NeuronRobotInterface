@@ -4,6 +4,7 @@
 \usepackage{times}
 \usepackage{helvet}
 \usepackage{courier}
+\usepackage{graphicx}
 \frenchspacing
 \setlength{\pdfpagewidth}{8.5in}
 \setlength{\pdfpageheight}{11in}
@@ -28,7 +29,7 @@ Lowell, Massachusetts 01835\\
 \maketitle
 \begin{abstract}
 \begin{quote}
-In order to perform reasearch on learning in cultures of mouse neurons, a hardware and software for interfacing a biological neuronal culture to a robot arm has been constructed. 
+In order to perform research on learning in cultures of mouse neurons, a hardware and software for interfacing a biological neuronal culture to a robot arm has been constructed. 
 The software architecture is modular, which permits simulated neurons to be used in place of biological neurons. 
 In either case, the activity of the culture over time is represented as an activation vector that captures recent spatiotemporal patterns of neuron firing. 
 The activation vector is converted into control signals for the arm in a manner that can be generalized to multiple degrees of freedom. 
@@ -238,18 +239,19 @@ Buffering many dish states in this manner allows the system to adapt to the acti
 Any time that the signal on a channel increases beyond 3 standard deviations from the mean for that channel, the channel is considered to be ``spiking''. 
 A spike on a channel indicates that a neuron near that channel has produced an action potential. 
 
-In order to convert spikes from the culture into motion commands for the arm, a simplified version of the control scheme used in DeMarse /textit{et al} 2001 is used \cite{demarse2001neurally}. 
-For each channel in the dish, if a spike is detected on that channel, the activation at that site is incremented. 
-Activation decays exponentially over time 
+In order to convert spikes from the culture into motion commands for the arm, a simplified version of the control scheme used in DeMarse \textit{et al} 2001 is used \cite{demarse2001neurally}. 
+For each channel in the dish, if a spike is detected on that channel, the activation A at that site is incremented by: 
 
-TODO activation increment and decay functions here
+$A_n (t_i) = A_n(t_{i-1})e^{-\beta(t_i - t_{i-1})} + 1$
 
-The activation over the entire culture is normalized to the range 0.0 - 1.0 by applying
+Activation decays exponentially over time with the decay constant $\beta=1s^-1$.
+The activations over the entire culture are collected in the activation vector V, and normalized to the range 0.0 - 1.0 by applying
 
-TODO normalization function here
+$V_n(t_i) = tanh(\delta A_n(t_i))$
 
-The resulting vector of 60 values is the activation vector for the dish at a specific time.
-Every 0.2 seconds, the activation vector of the culture is compared to a pair of pre-selected activation vectors. 
+with $\delta=0.1$. Without normalization, recording sites with very high spike rates can dominate the output, even if the variation of the site in response to stimulation is minimal. 
+The resulting vector of 60 values is the normalized activation vector for the dish at a specific time.
+Every 0.2 seconds, the normalized activation vector of the culture is compared to a pair of pre-selected activation vectors. 
 The pre-selected vectors are a ``right'' and ``left'' vector, with the ``left'' vector having maximum activation at all pads on the left side of the dish, and zero elsewhere, while the ``right'' vector has maximum activation at all pads on the right side of the dish and zero elsewhere. 
 
 \begin{table}
@@ -266,20 +268,74 @@ The pre-selected vectors are a ``right'' and ``left'' vector, with the ``left'' 
 \caption{Example of an activation vector for activity on the left side of the dish, with each vector element in its location on the dish} 
 \end{table}
 
-The comparison is a simple calculation of euclidian distance between the left and right vectors and the current activity vector of the culture. 
+The comparison is a simple calculation of euclidean distance between the left and right vectors and the current activity vector of the culture. 
 If the distance from the current activation vector to the left vector is less than the distance to the right vector the arm will be commanded to move left. 
 Similarly, if the current vector is closer to the right than the left vector, the arm will be commanded to move right. 
 In either case, the difference between the distances must be large enough to overcome a dead band, or the arm is not instructed to move at all. 
 
-
+Because it only uses two constant vectors for comparison, this system only permits motion left or right, along a single axis. 
+By expanding the selection of vectors used for the comparison, additional degrees of motion could be selected. 
 
 \section{Results}
 
-Control with biological cultures
+\subsection{Control with a Biological Culture} 
 
-Noise and noise suppression
+\subsection{Noise and Noise Suppression}
 
-Control with an artificial culture
+The current system displays some degree of noise at exactly 60Hz, due to interference from AC lines in the laboratory being picked up and amplified by the MEA amplifier. 
+In order to suppress this noise, a software filter is being developed which will suppress 60Hz noise on each channel of the signal before attempting to classify the signal into spikes. 
+
+\subsection{Control with an Artificial Culture}
+
+At present, the artificial culture cannot be run in real time due to the computational complexity of the neuronal model and the number of neurons being simulated. 
+Because a less complex neuronal model would not support realistic cell membrane voltages, and reducing the number of neurons would make the simulation unlike a biological culture, using the simulator to control the arm is done in two steps. 
+In the first step, the simulator is run with simulated stimulus. 
+The stimulus is the same as the stimulus used in biological cultures, a pre-recorded biological signal. 
+Prior to the simulation run, the times that the stimulus will be delivered are configured by the software. 
+Because the stimulation was recorded at 1000Hz, there is a 1:1 correlation between samples of the stimulation and timesteps in the simulation. 
+The stimulation is a recording from a MEA system like the simulator is intended to simulate, and contains a voltage signal of the same amplitude as is received at the electrodes, so it is assumed that the sensing range of each electrode is also the maximum reach of the stimulation applied to that electrode. 
+During the run, at each timestep of the simulation, the simulator determines which electrodes the stimulation should be delivered to, and what voltage should be delivered.
+For each electrode, the corresponding voltage is added to the membrane voltage of the neurons around the electrode, in proportion to the distance between the neuron and the electrode. 
+After the recording is run, the recording of all of the membrane voltages of the neurons are used to calculate the voltage at each electrode. 
+Each neuron contributes voltage proportional to its distance from the electrode. 
+The resulting voltages are recorded in a Labview LVM text file format, which many of the tools related to the simulator are capable of processing. 
+
+In order to control the arm using a recording, a program was written that uses the Labview LVM file as input, and publishes dish states as if the input were received from a dish, rather than being read from a file. 
+Because of the modular nature of the ROS software, this program can interface to the software that generates the activation vectors and arm motion control outputs without modification of any other component of the software. 
+The arm can then be run as if it were being controlled by the biological hardware. 
+
+When the arm is run with a simulated recording, there is no noise at all present. 
+The arm moves with a very high degree of correspondence to the applied stimulation. 
+
+%Image of the track of the motion
+\begin{figure}
+	\centering
+	\includegraphics[width=\linewidth]{simulated_motion.png}
+	\caption{Motion of the arm in response to simulated stimulation. 
+	For each timestep of the motion, if the arm moved left, -1 was added to its position. If it moved right, 1 was added to its position. 
+	This trace indicates that the arm moved left, then moved most of the way back to its starting position.}
+	\label{fig:motion_sim}
+\end{figure}
+
+For the simulated test run, the simulated culture started with 5 seconds of no stimulation, then received 20 seconds of stimulation on the left side, 10 seconds of no stimulation, 20 seconds of stimulation on the right side, and then 5 more seconds of no stimulation. 
+As shown in \ref{fig:motion_sim}, the arm moves left, stops, and then moves right. 
+The rightward motion does not completely return to the center position of the arm. 
+It also displays a greater slope in the graphic, which indicates a slower motion in real life, as the arm took a longer time to do less motion.
+The slower motion right is likely because the stimulation on the left side of the dish would initiate activity that would compete with the stimulation on the right side of the dish.
+Because the activity from the left side stimulation would not have died out completely by the time the right side stimulation started, the rightward motion would be interfered with. 
+
+%Graphic of the applied stimulation
+\begin{figure}
+	\centering
+	\includegraphics[width=\linewidth]{labview_2014-3-18-12:22:52_6-voltages.png}
+	\caption{Electrical activity on all 60 recording cites of the simulated culture dish. The virtual stimulation is visible on the second row from the bottom in the first and seventh contact areas.}
+	\label{fig:simulated_activity}
+\end{figure}
+
+Figure \ref{fig:simulated_activity} shows the simulated electrical activity of the dish during the simulated stimulation run. 
+The image shows graphs of the voltage over time at the 60 recording sites in the dish, laid out as they are on the surface of the dish.
+The layout would be an 8 x 8 grid, but there are no corner electrodes.
+The stimulation is visible as a serrated-looking block of signal on the first and seventh recording sites of the second-to-last line of graphs in the image.
 
 \section{Discussion}
 
