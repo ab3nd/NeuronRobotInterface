@@ -5,12 +5,14 @@
 \usepackage{helvet}
 \usepackage{courier}
 \usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+
 \frenchspacing
 \setlength{\pdfpagewidth}{8.5in}
 \setlength{\pdfpageheight}{11in}
 \pdfinfo{
 /Title (Control of a Robot Arm with Artifical and Biological Neural Networks)
-/Author (Abraham Shultz, Holly Yanco, Thomas Shea)}
+/Author (Abraham Shultz, Sangmook Lee, Holly Yanco, Thomas Shea)}
 \setcounter{secnumdepth}{0}  
 
 \newcommand{\superscript}[1]{\ensuremath{^{\textrm{\scriptsize{#1}}}}}
@@ -24,7 +26,7 @@
 \author{Abraham Shultz, Holly Yanco, Thomas Shea\\
 University of Massachusetts Lowell\\
 1 University Avenue\\
-Lowell, Massachusetts 01835\\
+Lowell, Massachusetts 01854\\
 }
 \maketitle
 \begin{abstract}
@@ -58,7 +60,7 @@ To that end, we have constructed a closed loop of perception, stimulation, activ
 
 There are two components of the research. 
 The first component is the growth of biological neuronal networks for use as robotic controllers; the second is the simulation of these cultures \textit{in silico} to guide future research. 
-By using the observed behavior of the cultured neurons to guide the development of the software for the simulator, we hope to produce an accurate simulator. 
+To reach our goal of accurately simulating the biological networks, we are using the observed behavior of the cultured neurons to guide the development of the software for the simulator.
 As the simulator's accuracy improves, it will be able to be used to simulate very large series of experiments in order to guide future research with biological cells in useful directions. 
 
 \subsection{Biological Cultured Neuronal Networks}
@@ -77,7 +79,7 @@ After the organism is born, and actually for some time before birth, incoming se
 The propagation of these impressions through the brain results, eventually, in motor activity, which in turn changes the organism's relation to the world and the resulting sensory input. 
 This complete loop is what we mean when we talk about embodiment: the ability of a system to perceive the outside world, process that perception, and act in the world. 
 The brain closes the gap between perception and action, while the world closes the loop between action and perception. 
-By embodying neuronal cultures in a robot, we hope to provide a framework for investigating how incoming signals are integrated by neuronal networks, and how this integration affects the structure of the network. 
+By embodying neuronal cultures in a robot, our goal is to provide a framework for investigating how incoming signals are integrated by neuronal networks, and how this integration affects the structure of the network. 
 
 \subsection{Experimental Uses}
 
@@ -216,7 +218,7 @@ The electrical signal has elements, particularly low-amplitude variations, that 
 The LIF model is good for modeling the timing of signals between neurons, but it does not produce biologically plausible action potentials. 
 To obtain more realistic spike and sub-threshold voltages, the simulator was converted to use an Izhikevich 2-D integrate and fire model instead of basic LIF neurons \cite{izhikevich2003simple}.
 The Izhikevich model has parameters that can be configured to reproduce the behavior of many biological neurons. 
-The current configuration of the model uses the configuration that Izhikevich calls ``Regular Spiking'' for excitatory neurons and ``Fast Spiking'' for inhibitory neurons, based on the observed behavior of biological neurons (CITE)
+The current configuration of the model uses the configuration that Izhikevich calls ``Regular Spiking'' for excitatory neurons and ``Fast Spiking'' for inhibitory neurons, based on the observed behavior of biological neurons \cite{Izhikevich01082004}
 
 \subsection{Computer Interface}
 
@@ -228,7 +230,7 @@ The amplifier outputs are connected to a PCI-6071E DAQ card manufactured by Nati
 The DAQ card is responsible for digitizing the output of the amplifier for processing by the computer. 
 The card is controlled through the Linux COntrol and MEasurement Device Interface (COMEDI), which provides an open source library for collecting data from DAQ cards. 
 
-The acquisition and processing software is maintained as a collection of ROS nodes (CITE ROS).
+The acquisition and processing software is maintained as a collection of ROS nodes \cite{ROSAnnouncementPaper}.
 The node which acquires data from the DAQ card is called ``Zanni". 
 Zanni simply samples the card 1000 times per second and outputs the current value in volts of each channel of the MEA. 
 A collection of 60 voltage values is referred to as a ``dish state'' because it represents the electrical activity of the MEA at a specific instant in time. 
@@ -280,10 +282,46 @@ By expanding the selection of vectors used for the comparison, additional degree
 
 \subsection{Control with a Biological Culture} 
 
+To assess the ability of the arm to respond to signals from the culture, the arm camera was shown a tracking target on the left or right side of the camera's field of view.
+The motion of the arm was recorded by rosbag, a utility for recording all of the activity of ROS nodes in a file called a ``bag". 
+The motion commands sent to the arm were extracted from the bag. 
+Each motion left was assigned a value of -1 and each motion right a value of 1. 
+Starting from a center position of 0, the total motion was calculated at every timestamp where the arm was sent a motion command. 
+If the arm moved left, the total motion would become increasingly negative, while right motions would cause the total motion to become more positive. 
+
+%Picture of the motion track
+\begin{figure}
+	\centering
+	\includegraphics[width=\linewidth]{bio_motion_445.png}
+	\caption{Movement of the arm under the control of biological neurons. A tracking target was presented on the right side of the field of view of the camera. The arm moved right, as indicated by the positive value of position as time passes.}
+	\label{fig:bio_motion_right}
+\end{figure}
+%Picture of the electrical activity
+
+Figure \ref{fig:bio_motion_right} shows the total motion over time as the arm moved to track a target on the right side of its field of vision. 
+Figure \ref{fig:bio_motion_left} is a similar trace, but showing the system's reaction to a target on the left side of the camera's field of vision. 
+In both images, the overall movement is to the right or left, but displays significant wiggle as well.
+Most of this wiggle is likely due to spontaneous signaling within the culture.
+However, we have some concern that some of the wiggle is an artifact of noise from outside the recording system. 
+
+%Picture of the motion track
+\begin{figure}
+	\centering
+	\includegraphics[width=\linewidth]{bio_motion_446.png}
+	\caption{Movement of the arm under the control of biological neurons. In this case, the tracking target was presented on the left side of the field of view of the camera, and the arm moved left. 0 on the movement axis is the center of the arm's range of movement.}
+	\label{fig:bio_motion_left}	
+\end{figure}
+
 \subsection{Noise and Noise Suppression}
 
 The current system displays some degree of noise at exactly 60Hz, due to interference from AC lines in the laboratory being picked up and amplified by the MEA amplifier. 
 In order to suppress this noise, a software filter is being developed which will suppress 60Hz noise on each channel of the signal before attempting to classify the signal into spikes. 
+
+The expected consequence of noise in this system is to cause the reaction of the system to stimulation to have a significant degree of wiggle in it. 
+Rather than cleanly responding to a left or right stimulation with left or right motion, a noisy system would have a chance that the noise would overwhelm the activity of the neurons for that time period, and result in a motion contrary to that expected from the stimulation. Since the stimulation would be consistent, while the noise would be effectively random, the overall motion would be correct, but interspersed with incorrect moves. 
+This is what we observed in the behavior of the system under biological control.
+The degree of incorrect moves is also substantially reduced in the simulated system, using artificial cultures. 
+The simulation does not include simulation of noise, so there is no way for noise to add incorrect moves to the motion of the arm. 
 
 \subsection{Control with an Artificial Culture}
 
@@ -328,7 +366,7 @@ Because the activity from the left side stimulation would not have died out comp
 \begin{figure}
 	\centering
 	\includegraphics[width=\linewidth]{labview_2014-3-18-12:22:52_6-voltages.png}
-	\caption{Electrical activity on all 60 recording cites of the simulated culture dish. The virtual stimulation is visible on the second row from the bottom in the first and seventh contact areas.}
+	\caption{Electrical activity on all 60 recording sites of the simulated culture dish. The virtual stimulation is visible on the second row from the bottom in the first and seventh contact areas.}
 	\label{fig:simulated_activity}
 \end{figure}
 
@@ -343,6 +381,6 @@ There are computational methods for determining the approximate wiring of a deve
 These methods offer some promise for mapping the connectivity of the dish, but they do not give a complete or fully-accurate map. 
 Even if it was possible to completely map the connections of a culture, there is no way to duplicate it, as there is no way to control the growth of individual biological neurons and their axons. 
 
-
+\bibliographystyle{aaai}
 \bibliography{workshop-paper}
 \end{document}
