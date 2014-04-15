@@ -4,26 +4,36 @@
  */
 
 #include "humbucker/humbucker.h"
-#include "Iir.h"
+
 
 void Humbucker::callback(const neuro_recv::dish_state::ConstPtr& d)
 {
-	//Do nothing, just republish it
-	filtered_dish_pub_.publish(d);
+	//New dish to send out
+	neuro_recv::dish_state filtered_dish;
+	//Filter using the filter bank. Each channel has its own filter
+	for (int ii = 0; ii < 60; ii++)
+	{
+		filtered_dish.samples[ii] = filter_bank[ii].filter(d->samples[ii]);
+	}
+
+	filtered_dish_pub_.publish(filtered_dish);
 	ROS_INFO("Humbucker published a state.");
 }
 
 void Humbucker::run()
 {
-	//Set up a single filter
+	// Set up 60 filters, one for each input pad of the dish
 	// bandstop filter, centered at 60, width of 3
-	const int order = 20; //Higher order gets steeper rolloff
-	Iir::Butterworth::BandStop < order, Iir::DirectFormI > bs;
 	const float samplingrate = 1000; //Hz AKA samples/second
 	const float center_frequency = 60; //Hz, AKA USA power line noise
 	const float frequency_width = 5;
-	bs.setup(order, samplingrate, center_frequency, frequency_width);
-	bs.reset();
+	for(int ii = 0; ii < 60; ii++)
+	{
+		Iir::Butterworth::BandStop < order, Iir::DirectFormI > bs;
+		bs.setup(order, samplingrate, center_frequency, frequency_width);
+		bs.reset();
+		filter_bank.push_back(bs);
+	}
 
 	//Wait for a subscriber
 	filtered_dish_pub_ = n_.advertise<neuro_recv::dish_state>("filtered_dish_states", 1);
