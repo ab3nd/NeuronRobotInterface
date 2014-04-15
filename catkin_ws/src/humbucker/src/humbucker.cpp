@@ -4,6 +4,7 @@
  */
 
 #include "humbucker/humbucker.h"
+#include "Iir.h"
 
 void Humbucker::callback(const neuro_recv::dish_state::ConstPtr& d)
 {
@@ -14,6 +15,16 @@ void Humbucker::callback(const neuro_recv::dish_state::ConstPtr& d)
 
 void Humbucker::run()
 {
+	//Set up a single filter
+	// bandstop filter, centered at 60, width of 3
+	const int order = 20; //Higher order gets steeper rolloff
+	Iir::Butterworth::BandStop < order, Iir::DirectFormI > bs;
+	const float samplingrate = 1000; //Hz AKA samples/second
+	const float center_frequency = 60; //Hz, AKA USA power line noise
+	const float frequency_width = 5;
+	bs.setup(order, samplingrate, center_frequency, frequency_width);
+	bs.reset();
+
 	//Wait for a subscriber
 	filtered_dish_pub_ = n_.advertise<neuro_recv::dish_state>("filtered_dish_states", 1);
     ROS_INFO("Humbucker waiting for subscribers...");

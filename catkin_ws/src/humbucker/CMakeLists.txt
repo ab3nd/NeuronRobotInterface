@@ -32,4 +32,4 @@ include_directories(
 
 ## Compile the filter node
 add_executable(humbucker src/humbucker.cpp)
-target_link_libraries(humbucker ${catkin_LIBRARIES})
+target_link_libraries(humbucker ${catkin_LIBRARIES} iir)
