@@ -39,15 +39,18 @@ def getRedObject(image, timestamp):
     
     #Get the largest contour
     areas = [cv2.contourArea(c) for c in contours]
-    maxIdx = np.argmax(areas)
-    bigContour = contours[maxIdx]
-    
-    #Find its bounding box
-    x,y,w,h = cv2.boundingRect(bigContour)
-    
-    #Get the center of the bounding box and return that
-    center = (x+w/2, y+w/2)
-    return center
+    if len(areas) > 0:
+        maxIdx = np.argmax(areas)
+        bigContour = contours[maxIdx]
+        
+        #Find its bounding box
+        x,y,w,h = cv2.boundingRect(bigContour)
+        
+        #Get the center of the bounding box and return that
+        center = (x+w/2, y+w/2)
+        return center
+    else:
+        return (0,0)
     
 if __name__ == "__main__":
     #Parse the command line argument 
