@@ -28,17 +28,13 @@ def getRedObject(image, timestamp):
     retval, Sthresh = cv2.threshold(S, 45, 65536, cv2.THRESH_BINARY)
     redPx = cv2.bitwise_and(Hthresh, Sthresh)
     
-    #Dilate all the pixels
+    #Erode and dilate all the pixels to eliminate small areas and unify big ones
     kernel = np.ones((3,3), 'uint8')
     redPx = cv2.erode(redPx, kernel)
     kernel = np.ones((11,11), 'uint8')
     redPx = cv2.dilate(redPx, kernel)
-    #image = redPx
-    #Find contours 
-    #First, find edges using canny edge detection
-    #edges = cv2.Canny(redPx, 200, 400)
-    #contours, heirarchy = cv2.findContours(edges, cv2.cv.CV_RETR_EXTERNAL, cv2.cv.CV_CHAIN_APPROX_SIMPLE)
-    #contours, heirarchy = cv2.findContours(edges, cv2.cv.CV_RETR_LIST, cv2.cv.CV_CHAIN_APPROX_NONE)
+    
+    #Find the contours
     contours, heirarchy = cv2.findContours(redPx, cv2.cv.CV_RETR_EXTERNAL, cv2.cv.CV_CHAIN_APPROX_SIMPLE)
     
     #Get the largest contour
@@ -46,18 +42,11 @@ def getRedObject(image, timestamp):
     maxIdx = np.argmax(areas)
     bigContour = contours[maxIdx]
     
-    #Draw its bounding box
+    #Find its bounding box
     x,y,w,h = cv2.boundingRect(bigContour)
-    #cv2.rectangle(image, (x,y), (x+w,y+h), (0,255,0))
     
-    #Draw its center
+    #Get the center of the bounding box and return that
     center = (x+w/2, y+w/2)
-    #radius = 5
-    #cv2.circle(image, center, radius, (255,255,0))
-    
-    #Draw the other contours too
-    #cv2.drawContours(image, contours, -1, (255,0,0))
-    #cv2.imwrite("frame_{0}.png".format(timestamp), image)
     return center
     
 if __name__ == "__main__":
