@@ -70,10 +70,6 @@ As the simulator's accuracy improves, it will be able to be used to simulate ver
 In order to gather information about the behavior of neurons, neurobiology researchers grow cultures of neurons.
 A Multi-Electrode Array (MEA) is a type of culture dish that provides researchers with a way to monitor the electrical activity of neurons at or near the level of individual cells. 
 These cultures of neurons also allow the researchers to perform experiments that operate directly on the neurons, without the complications that may be caused by the interacting systems of a living organism. 
-Because the cells are grown in a culture medium, chemicals can be added to or removed from their environment to modify their ability to signal. 
-For example, tetrodotoxin (TTX) prevents sodium channels from acting, which prevents neurons from signaling to each other. 
-In culture, the suppression of signaling does not kill the neurons, and can be reversed by removing the TTX \cite{wagenaar2004effective}. 
-However, in organisms, the action of TTX paralyzes the respiratory muscles, which kills the animal.  
 Research in Thomas Shea's lab has used this method with bicuculline to demonstrate that inhibitory connections are required for learning in cultured neurons, and with amyloid-$\beta$ to demonstrate its effects on signaling \cite{lee2013rapid,shea2009optimization}. 
 
 Despite the advantages of cultures, they also have drawbacks. 
@@ -89,37 +85,24 @@ The brain closes the gap between perception and action, while the world closes t
 By embodying neuronal cultures in a robot, our goal is to provide a framework for investigating how incoming signals are integrated by neuronal networks, and how this integration affects the structure of the network. 
 
 \subsection{Construction}
-The MEA itself consists of a glass plate with an array of conductive pads laid out on it. %, as shown in Figure \ref{fig:MEA_layout}.
-These conductive pads are used to detect the electrical activity of neurons cultured on the plate.
+The MEA itself consists of a glass plate with an array of conductive pads laid out on it. 
 Conductive traces extend from each pad to the edges of the plate. 
 When a neuron sends a signal, its electrical potential changes, and this change in potential is detected by sensitive amplifiers connected to the traces for pads near that neuron.
-The size of each pad is close to the size of a single neuron, so neuron firing can be localized to a single neuron or small group of neurons by determining from which pad the signal came.
-
-%\begin{figure}
-%	\centering
-%	\includegraphics[width=\linewidth]{fullMEA.png}
-%	\caption{Top-down view of an MEA. A is the plate glass. B is a contact for the signal to leave the dish. C is a raised ring that contains the culture media. D is the area of pads that receive electrical signals from the neurons.}
-%	\label{fig:MEA_layout}
-%\end{figure}
-
-To grow a culture, the MEA glass is first prepared by coating it with laminin or other proteins that enable neurons to bind to the plate surface. 
-This protein coat creates a surface to which cells are able to adhere, but does not guarantee that a cell will adhere to any specific location.
 
 Fetal mice are used as the cell source because their neurons are still developing and forming connections. 
 To acquire cells, mice must be bred and sacrificed, and the fetal mouse neural tissue must be surgically prepared and chemically treated before being plated on the MEA. 
 The chemical treatment uses enzymes to disassociate the individual neurons. 
-The neurons are added to the MEA as a suspension in liquid medium and given some time to bond to the protein layer in the MEA.
+The neurons are added to the MEA as a suspension in liquid medium and given some time to bond to the MEA.
 After the neurons have bonded, the culture medium is replaced, which removes any unbonded cells along with the old culture medium \cite{wagenaar2006extremely}.
 Typical cell suspension densities range from 300 to 2,000 cells per mm$^2$, but can reach as high as 80,000 cells per mm$^2$ \cite{shea2009optimization,ruaro2005toward}.
 Extremely sparse cultures tend to have high mortality rates and do not form sufficient connections to display mature signaling patterns \cite{shea2009optimization}.
 
 Since the culture is applied to the plate as a suspension of neurons, there are limited ways to control the location and distribution of neurons. 
 One method is to apply the suspension of neurons to the desired regions using a micropipette, resulting in higher neuron density in areas where the drops were added. 
-Another method is to apply the adhesive protein to the plate in a pattern using a process such as microstamping. 
+Another method is to apply pattern of protein that affects how the neurons bond to the plate surface.
 The pattern of cells influences the connectivity of the culture \cite{sorkin2006compact}.
 
-When the cells are initially added to the culture, they are not connected. 
-For most of the first month in culture, the cells build new connections. 
+When the cells are initially added to the culture, they are not connected, but they begin to form connections quickly.
 Starting at around 7 days \emph{in vitro} (DIV) and continuing to around 30 DIV, the connections are not complete, and signaling is dominated by constant, high-amplitude spiking \cite{warwick2010controlling}. 
 The resulting signals have been described as ``epileptiform."
 In the young, epileptiform stage, it is impossible to isolate the neurons' response to stimulus from the constant spike activity, so experiments must be performed after the neuron network is finished developing. 
@@ -129,8 +112,20 @@ The active bursts may be localized to one region, spread across the culture, or 
 After 2-3 months of this sort of activity, the culture eventually becomes senescent, and only reacts to stimuli in simple, stereotyped ways \cite{warwick2010controlling}. 
 The cells can continue to live for months or even years, assuming that equipment failure or bacterial infection does not kill them \cite{potter2001new}. 
 
-The formation of connections between cells in the culture is stochastic, though some overall organization is emergent from ``rules'' within each cell. 
-As a result, each biological culture is unique and cannot be exactly replaced when it dies. 
+\subsection{Robot}
+
+The robot used in this work is a Manus ARM (Assistive Robotic Manipulator), created by Exact Dynamics.
+The ARM is a 6-DOF arm with a two-fingered gripper. 
+A Microsoft LifeCam 720p resolution webcam is mounted on the gripper to serve as a source of feedback to the cultured neurons. 
+When the ARM moves, the camera moves with it, changing the view of the world. 
+The image from the camera is converted to HSV color space and thresholded to find concentrations of red pixels.
+The stimulation signal is a recording of neuronal activity from cultured neurons, as described in Zemianek et. al. \shortcite{zemianek2012stimulation}.
+This stimulation provides feedback to the culture about the state of the world, and the culture's reaction to the stimulus provides motion commands to the arm to move in the world. 
+
+At present, the red pixel concentrations on the left and right sides of the image are used to determine whether the culture should be stimulated on the left or right side. 
+The current motion control scheme is one-dimensional because the currently available stimulation hardware provides two input channels, and so creates a severe bottleneck for feedback to the culture. 
+By developing a more complex stimulation system, particularly one which can apply a pattern of activity over some or all of the available stimulation sites, the complexity of the input to the culture can be increased. 
+More complex stimulation will provide a more versatile representation of the view from the camera, expanding the dimensionality of the input stimulus and thus the expected dimensionality of the output.
 
 \subsection{Computer Interface}
 
@@ -146,9 +141,11 @@ Zanni samples the card 1000 times per second and outputs the current value in vo
 A collection of 60 voltage values is referred to as a ``dish state'' because it represents the electrical activity of the MEA at a specific instant in time. 
 
 Dish states are collected by a ROS node which uses the time series of voltages in each channel to determine the mean and standard deviation of the electrical signal. 
-In order to determine the mean and standard deviation, the node first buffers a large number of dish states from which to calculate the mean and standard deviation. 
+In order to determine the mean and standard deviation, the node first buffers 3000 dish states from which to calculate the mean and standard deviation. 
+The number of dish states buffered can be set from a configuration file. 
 Any time that the signal on a channel increases beyond 3 standard deviations from the mean for that channel, the channel is considered to be ``spiking''. 
-A spike on a channel indicates that a neuron near that channel has produced an action potential. 
+A spike on a channel indicates that a neuron near the conductive pad for that channel has produced an action potential. 
+However, the mapping of neurons to pads is not 1-to-1, so activity on a channel may indicate a small group of nearby neurons, rather than a single specific neuron.
 
 In order to convert spikes from the culture into motion commands for the arm, a simplified version of the control scheme used in DeMarse \textit{et al.} 2001 is used \shortcite{demarse2001neurally}. 
 For each channel in the dish, if a spike is detected on that channel, the activation A at that site is incremented and decayed by: 
@@ -161,23 +158,9 @@ The activations over the entire culture are collected in the activation vector V
 $V_n(t_i) = tanh(\delta A_n(t_i))$
 
 \noindent with $\delta=0.1$. Without normalization, recording sites with very high spike rates can dominate the output, even if the variation of the site in response to stimulation is minimal. 
-The resulting vector of 60 values is the normalized activation vector for the dish at a specific time.
+The resulting vector of 60 floating-point values is the normalized activation vector for the dish at a specific time.
 Every 0.2 seconds, the normalized activation vector of the culture is compared to a pair of pre-selected activation vectors. 
 The pre-selected vectors are a ``right'' and ``left'' vector, with the ``left'' vector having maximum activation at all pads on the left side of the dish, and zero elsewhere, while the ``right'' vector has maximum activation at all pads on the right side of the dish and zero elsewhere. 
-
-%\begin{table}
-%\begin{tabular}{cccccccc}
-% & 1.0 & 1.0 & 0.0 & 0.0 & 0.0 & 0.0 &  \\ 
-%1.0 & 1.0 & 1.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\ 
-%1.0 & 1.0 & 1.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\ 
-%1.0 & 1.0 & 1.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\ 
-%1.0 & 1.0 & 1.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\ 
-%1.0 & 1.0 & 1.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\ 
-%1.0 & 1.0 & 1.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 \\ 
-% & 1.0 & 1.0 & 0.0 & 0.0 & 0.0 & 0.0 &  \\ 
-%\end{tabular}
-%\caption{Example of an activation vector for activity on the left side of the dish, with each vector element in its location on the dish} 
-%\end{table}
 
 The comparison is a simple calculation of Euclidean distance between the left and right vectors and the current activity vector of the culture. 
 If the distance from the current activation vector to the left vector is less than the distance to the right vector the arm will be commanded to move left. 
@@ -260,6 +243,7 @@ Our simulator uses the configuration that Izhikevich calls ``Regular Spiking'' f
 \subsection{Control with a Biological Culture} 
 
 To assess the ability of the arm to respond to signals from the culture, the arm camera was shown a tracking target on the left or right side of the camera's field of view.
+The position of the tracking target affects the stimulation of the culture, and the reaction of the culture to the stimulation would trigger motion in the arm. 
 The resulting motion of the arm was recorded by rosbag, a utility which records all of the activity of ROS nodes in a file called a ``bag". 
 Each motion to the left was assigned a value of -1 and each motion right a value of 1. 
 Starting from a center position of 0, the total motion was calculated at every timestamp where the arm was sent a motion command. 
@@ -281,7 +265,7 @@ Most of this wiggle is likely due to spontaneous signaling within the culture.
 However, we have some concern that some of the wiggle is an artifact of noise from outside the recording system. 
 The current system displays some degree of noise at exactly 60Hz, due to interference from AC lines in the laboratory being picked up and amplified by the MEA amplifier. 
 In order to suppress this noise, a software filter is being developed which will suppress 60Hz noise on each channel of the signal before attempting to classify the signal into spikes. 
-
+%%
 The expected consequence of noise in this system is to cause the reaction of the system to stimulation to have a significant degree of wiggle in it. 
 Rather than cleanly responding to a left or right stimulation with left or right motion, a noisy system would have a chance that the noise would overwhelm the activity of the neurons for that time period, and result in a motion contrary to that expected from the stimulation. 
 Since the stimulation would be consistent, while the noise would be effectively random, the overall motion would be correct, but interspersed with incorrect moves. 
@@ -317,19 +301,6 @@ It also displays a greater slope in the graphic, as the arm took a longer time t
 The slower motion to the right is likely because the stimulation on the left side of the dish would initiate activity that would compete with the stimulation on the right side of the dish.
 Because the activity from the left side stimulation would not have died out completely by the time the right side stimulation started, the rightward motion would be interfered with. 
 
-%Graphic of the applied stimulation
-%\begin{figure}
-%	\centering
-%	\includegraphics[width=\linewidth]{labview_2014-3-18-12:22:52_6-voltages.png}
-%	\caption{Electrical activity on all 60 recording sites of the simulated culture dish. The virtual stimulation is visible on the second row from the bottom in the first and seventh contact areas.}
-%	\label{fig:simulated_activity}
-%\end{figure}
-
-%Figure \ref{fig:simulated_activity} shows the simulated electrical activity of the dish during the simulated stimulation run. 
-%The image shows graphs of the voltage over time at the 60 recording sites in the dish, laid out as they are on the surface of the dish.
-%The layout would be an 8 x 8 grid, but there are no corner electrodes.
-%The stimulation is visible as a serrated-looking block of signal on the first and seventh recording sites of the second-to-last line of graphs in the image.
-
 \section{Discussion}
 
 There are computational methods for determining the approximate wiring of a developed culture, based on the propagation delay of a signal in the culture and the synchrony of activity between different sites in the culture  \cite{erickson2008caged,esposti2008estimation}. 
@@ -349,7 +320,11 @@ As described in Zemianek et al., inversion of the stimulation signal changes whe
 With a fast computer in the loop, we will be able to examine the activity of biological cultures in real time. 
 This will allow us to recognize the patterns of activity that a particular input elicits in the network. 
 
- 
+The eventual goal for working with recognition of the patterns of activity of a neuronal network, rather than the network-wide strength of connections (e.g. DeMarse and Dockendorf \shortcite{demarse2005adaptive}), is to allow input and output streams of very high dimensionality.
+Human introspective experience indicates that our sensorium is rich and detailed.
+Encoding information purely as frequency of stimulation or purely as location of stimulation results in a very narrow range of representable input, and so restricts the degree of embodiment that a neuron/robot system can support.
+
+
 \bibliographystyle{aaai}
 \bibliography{workshop-paper}
 \end{document}
