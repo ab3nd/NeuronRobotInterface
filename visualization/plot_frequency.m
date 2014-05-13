@@ -1,9 +1,11 @@
+#!/usr/bin/octave -qf
 # This is for GNU octave, might also work with matlab
-# not a function file:
-1;
+
+arg_list = argv();
+[dir, name, ext, ver] = fileparts (arg_list{1});
 
 # Load the data file
-data = load(inputFile);
+data = load(arg_list{1});
 
 for ch = 1:60
    # Get one channel
@@ -28,11 +30,12 @@ for ch = 1:60
    #Draw some pretty pictures
    figure;
    plot(f, y_fft);
+   set (gca, 'xtick', [0 60 100 200 300 400 500]);
    plotTitle = ["Channel " num2str(ch)];
    title(plotTitle);
    xlabel("Hz");
    ylabel("Amplitude");
-   fname = ["./ch_" num2str(ch) "_fft.png"];
+   fname = ["./" name "_ch_" num2str(ch) "_fft.png"];
    print(1, fname);
    close(1);
 

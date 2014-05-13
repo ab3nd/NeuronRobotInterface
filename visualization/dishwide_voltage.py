@@ -4,7 +4,7 @@ import os.path
 import argparse
 from matplotlib import pyplot as plt
 import sys
-sys.path.append("../../common")
+sys.path.append("../common")
 import labviewloader
 
 
@@ -61,6 +61,7 @@ if __name__ == '__main__':
         for channelNum in range(60):
             samples = ll.getDataCol(channelNum)
             samples = [float(str(sample)) for sample in samples]
+            plt.figure(figsize=(25,6))
             plt.plot(samples)
             plt.savefig(baseTableName + "_v_ch_{0}.png".format(channelNum))
             plt.clf()
