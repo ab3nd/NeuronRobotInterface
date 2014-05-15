@@ -11,6 +11,52 @@ import labviewloader
 #For a dish, generate a histogram of the voltages in 0.00001 volt wide bins
 #across each channel, over all samples
 
+#Plot multiple data in multiple images
+def plotMultiImage(data):
+    channelNum = 0;
+    for channel in data:
+        plt.figure(figsize=(25,6))
+        plt.plot(channel)
+        plt.savefig(baseTableName + "_v_ch_{0}.png".format(channelNum))
+        channelNum += 1
+        plt.clf()
+
+#Plot all data together in the same image
+def plotSingleImage(data):
+    axisNum = 0
+    plt.figure(figsize=(20,12))
+    skip = 0
+    for row in range(8):
+        for col in range(8):
+            axisNum += 1
+            
+            
+            #skip the corners
+            if (row == 0) and (col == 0):
+                skip += 1
+                continue
+            if (row == 0) and (col == 7):
+                skip += 1
+                continue 
+            if (row == 7) and (col == 0):
+                skip += 1
+                continue 
+            if (row == 7) and (col == 7):
+                skip += 1
+                continue 
+           
+            ax = plt.subplot(8, 8, axisNum)
+            
+            channel = (axisNum - skip) -1
+            #samples = ll.getDataCol(channel)
+            samples = data[channel]
+            plt.plot(samples)
+            ax.set_yticklabels([])
+            ax.set_xticklabels([])
+    plt.tight_layout()
+    plt.savefig(baseTableName + ".png")
+
+
 if __name__ == '__main__':
     # Get the input file name
     argparser = argparse.ArgumentParser("Load and graph a labview LVM file")
@@ -21,48 +67,37 @@ if __name__ == '__main__':
     
     #Create a figure name for storing the data
     baseTableName = os.path.basename(infileName).split('.')[-2]
+    extent = os.path.basename(infileName).split('.')[-1]
     baseTableName = baseTableName.replace(" ", "_")
     
-    # Load the data file
-    ll = labviewloader.LabViewLoader()
-    ll.load(infileName)
-
-    if args.multi_image:
-        axisNum = 0
-        plt.figure(figsize=(20,12))
-        for row in range(8):
-            for col in range(8):
-                axisNum += 1
+    data = []
+    if extent == "csv":
+        #load into 2D array
+        data = []
+        for channels in range(60):
+            data.append([])
+        with open(infileName, "r") as inputFile:
+            #Get a line and convert it to floating point numbers
+            for line in inputFile:
+                values = [float(val) for val in line.split(',')]
+                #Load into the data array
+                for index in range(60):
+                    data[index].append(values[index])
                 
-                
-                #skip the corners
-                if (row == 0) and (col == 0):
-                    continue
-                if (row == 0) and (col == 7):
-                    continue 
-                if (row == 7) and (col == 0):
-                    continue 
-                if (row == 7) and (col == 7):
-                    continue 
-               
-                ax = plt.subplot(8, 8, axisNum)
-                #For now, just one channel
-                channel = axisNum - 1
-                samples = ll.getDataCol(channel)
-                #Convert from Decimal, lose precision, so sad
-                samples = [float(str(sample)) for sample in samples]
-                plt.plot(samples)
-                ax.set_yticklabels([])
-                ax.set_xticklabels([])
-        plt.tight_layout()
-        plt.savefig(baseTableName + ".png")
-    else:
-        #plt.figure(figsize=(80,10))
+                    
+    else: #This had better be an LVM file
+        # Load the data file
+        ll = labviewloader.LabViewLoader()
+        ll.load(infileName)
+    
+        #Convert to a list of lists (2D array). Each list is a channel, 60 channels. 
         for channelNum in range(60):
             samples = ll.getDataCol(channelNum)
-            samples = [float(str(sample)) for sample in samples]
-            plt.figure(figsize=(25,6))
-            plt.plot(samples)
-            plt.savefig(baseTableName + "_v_ch_{0}.png".format(channelNum))
-            plt.clf()
+            samples = [float(str(sample)) for sample in samples] 
+            data.append(samples)
             
+    if args.multi_image:
+        plotMultiImage(data)
+    else:
+        plotSingleImage(data)
+                

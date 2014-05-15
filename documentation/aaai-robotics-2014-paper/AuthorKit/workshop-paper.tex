@@ -286,7 +286,11 @@ If the arm moved left, the total motion would become increasingly negative, whil
 \end{figure*}
 
 Figure \ref{fig:motion_images} shows the total motion over time as the arm moved to track a target on the right side of its field of vision. 
-The biological culture displays significantly more ``wiggle'' in the resulting motion than the simulated culture.
+For the leftmost image, the arm begins moving left around 70 seconds into the recording, and has moved as far left as it can after 120 seconds. 
+For the center image, the arm begins moving right after 50 seconds, and has moved nearly all the way right by around 70 seconds. 
+In each case, after the motion, the arm remained mostly in the left or right position, but with some oscillation or ``wiggle'' around that position. 
+
+The biological culture displays significantly more wiggle in the resulting motion than the simulated culture.
 Most of this wiggle is likely due to spontaneous signaling within the culture.
 However, we have some concern that some of the wiggle is an artifact of noise from outside the recording system. 
 The current system displays some degree of noise at exactly 60Hz, due to interference from AC lines in the laboratory being picked up and amplified by the MEA amplifier. 
@@ -298,6 +302,9 @@ Since the stimulation would be consistent, while the noise would be effectively 
 This is what we observed in the behavior of the system under biological control.
 The degree of incorrect moves is also substantially reduced in the simulated system.
 The simulation does not include simulation of noise, so there is no way for noise to add incorrect moves to the motion of the arm. 
+Under simulated culture control, the arm begins its move left almost immediately, stops, and reverses when the stimulation is applied to the other side of the simulated culture. 
+The path of the arm under simulated culture control is depicted in the leftmost image of Figure \ref{fig:motion_images}.
+
 
 \subsection{Control with an Artificial Culture}
 
@@ -355,6 +362,7 @@ Encoding information purely as frequency of stimulation or purely as location of
 \section{Acknowledgements}
 
 This work was sponsored in part by Army Research Office grant W911NF-11-1-0125.
+
 
 \bibliographystyle{aaai}
 \bibliography{workshop-paper}

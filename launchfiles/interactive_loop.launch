@@ -1,0 +1,29 @@
+<launch>
+
+   <rosparam command="load" file="./dummy.yaml"/>
+
+   <!-- Launch everything that has to be running on the ARM computer. Further explanation below -->
+   <env name="ROS_PACKAGE_PATH" value="/home/ams/Projects/ams_thesis/zanni/catkin_ws/src:/home/ams/Projects/eclipse_workspace/catkin_ws/src:/opt/ros/groovy/share:/opt/ros/groovy/stacks:/home/ams/Projects/ams_thesis/arm_project:/home/ams/ros_workspace"/>
+      
+   <!-- 
+      Configure and launch GSCAM. This is used to get video data from the camera on the arm. 
+      We may not need all of these arguments to gstreamer, but it should work with them. 
+   -->
+   <env name="GSCAM_CONFIG" value="v4l2src ! ffmpegcolorspace" />
+   <node pkg="gscam" type="gscam" name="gscam" output = "screen">
+      <param name="gstreamer_pipeline" value="v4l2src device=/dev/video0 ! videorate ! videoscale ! video/x-raw-rgb, framerate=5/1, width=320, height=240 ! ffmpegcolorspace | deinterlace"/>
+   </node>
+                     
+   <!-- Start up the image slicer. This counts red pixels and emits an array of counts. -->
+   <node pkg="img_slicer" type="img_slicer" name="img_slicer"/>
+     
+   <!-- ARM Control talks to the arm hardware -->   
+   <node pkg="arm" name="arm_control" type="arm_control"/>
+         
+   <!-- Activation Vector controller takes in dish states and sends out motion commands. It replaces the CAT control scheme. -->
+   <node pkg="activation_vector" name="act_vector" type="act_vector"/>
+   
+   <!-- Dish/ARM Teleop receives motion commands and ships them out over the CAN bus to move the arm -->
+   <node pkg="arm" name="teleop_arm_dish" type="teleop_arm_dish"/>
+
+</launch>
