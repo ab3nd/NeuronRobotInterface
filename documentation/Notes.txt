@@ -1413,6 +1413,473 @@ Closing the Loop: Stimulation feedback systems for embodied MEA cultures
 A Collision Avoidance Model Based on the Lobula Giant Movement Detector Neuron of the Locust
    Not really related to my work, but pretty neat
    
-   
+
+2/20/2013
+
+Got the 7.8 version of the driver (release apparently 1/31/2013).
+
+make clean
+make 
+sudo make install
+
+Seemed to run fine, no error messages or hassles
+
+dmesg sez:
+[606728.627046] usb 2-1.6: new full-speed USB device number 4 using ehci_hcd
+[606728.735822] pcan: Release_20130131_n (le)
+[606728.735827] pcan: driver config [mod] [isa] [pci] [dng] [par] [usb] [pcc] [net] 
+[606728.736328] pcan: new usb adapter with 1 CAN controller(s) detected
+[606728.736347] pcan: usb hardware revision = 28
+[606728.787319] pcan: registered netdevice can0 for usb hw (major,minor 180,32)
+[606728.787322] pcan: usb device minor 32 found
+[606728.787339] usbcore: registered new interface driver pcan
+[606728.787353] pcan: major 247.
+
+ams@robot-lab7:~/Downloads$ cat /proc/pcan 
+
+*------------- PEAK-System CAN interfaces (www.peak-system.com) -------------
+*------------- Release_20130131_n (7.8.0) Feb 20 2013 13:08:30 --------------
+*------------- [mod] [isa] [pci] [dng] [par] [usb] [pcc] [net] --------------
+*--------------------- 1 interfaces @ major 247 found -----------------------
+*n -type- ndev --base-- irq --btr- --read-- --write- --irqs-- -errors- status
+32    usb can0 ffffffff 255 0x011c 00000000 00000000 00000000 00000000 0x0000
+
+
+12/8/2010
+Installing the pcan drivers on ubuntu to connect to the USB/CAN interface
+
+Linux version 2.6.32-26-generic (buildd@rothera) (gcc version 4.4.3 (Ubuntu 4.4.3-4ubuntu5) )
+
+"apt-cache search pcan"  turns up no results
+
+Download driver from here: http://www.peak-system.com/fileadmin/media/linux/index.htm#download
+	- Compiling with netdev support. Can always recompile if chardev turns out to be the way and the light
+
+Build and install
+  tar -xzvf peak-linux-driver.6.20.tar.gz 	
+  make clean
+  make
+  sudo make install
+	- Got
+	 	make[1]: Entering directory `/home/ams/Downloads/peak-linux-driver-6.20/driver'
+		make[1]: *** No rule to make target `depend'.  Stop.
+		but compile proceeds anyway
+
+May get error related to popt.h being missing. If you do, do this:
+  sudo apt-get install libpopt-dev
+	
+		
+Modprobe to test
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ sudo modprobe pcan
+[sudo] password for ams: 
+WARNING: All config files need .conf: /etc/modprobe.d/pcan, it will be ignored in a future release.
+WARNING: All config files need .conf: /etc/modprobe.d/pcan, it will be ignored in a future release.
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ 
+  
+Tasty looking dmesg output
+[ 1983.718084] pcan: Release_20100616_n
+[ 1983.718090] pcan: driver config [mod] [isa] [pci] [dng] [par] [usb] [pcc] [net] 
+[ 1983.718176] usbcore: registered new interface driver pcan
+[ 1983.718223] pcan: major 249.
+[ 2045.780455] usb 5-1: new full speed USB device using uhci_hcd and address 5
+[ 2045.973265] usb 5-1: configuration #1 chosen from 3 choices
+[ 2045.982222] pcan: usb hardware revision = 28
+[ 2046.019557] pcan: registered netdevice can0 for pcan usb hw (minor 32)
+[ 2046.019564] pcan: usb device minor 32 found
+
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ cat /proc/pcan 
+
+*------------ PEAK-Systems CAN interfaces (www.peak-system.com) -------------
+*--------------------------  Release_20100616_n  ----------------------------
+*------------- [mod] [isa] [pci] [dng] [par] [usb] [pcc] [net] --------------
+*--------------------- 1 interfaces @ major 249 found -----------------------
+*n -type- ndev --base-- irq --btr- --read-- --write- --irqs-- -errors- status
+32    usb can0 ffffffff 255 0x001c 00000000 00000000 00000000 00000000 0x0000
+
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ ls /dev/p
+parport0  pcan32    pcanusb0  pktcdvd/  port      ppp       psaux     ptmx      pts/ 
+
+For the netdev version, the device file is only used to set the bit rate for the interface
+
+Trying to load the network can modules to talk to the SocketCan interface
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ lsmod | grep can
+pcan                   44192  0 
+pcmcia                 30784  1 pcan
+parport                32635  4 pcan,ppdev,parport_pc,lp
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ ifconfig vcan0 up
+vcan0: ERROR while getting interface flags: No such device
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ sudo ifconfig vcan0 up
+vcan0: ERROR while getting interface flags: No such device
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ sudo modprobe can
+WARNING: All config files need .conf: /etc/modprobe.d/pcan, it will be ignored in a future release.
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ sudo modprobe can-raw
+WARNING: All config files need .conf: /etc/modprobe.d/pcan, it will be ignored in a future release.
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ sudo modprobe can-bcm
+WARNING: All config files need .conf: /etc/modprobe.d/pcan, it will be ignored in a future release.
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ sudo modprobe vcan
+WARNING: All config files need .conf: /etc/modprobe.d/pcan, it will be ignored in a future release.
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ lsmod | grep can
+vcan                    1314  0 
+can_bcm                11910  0 
+can_raw                 5349  0 
+can                    21728  2 can_bcm,can_raw
+pcan                   44192  0 
+pcmcia                 30784  1 pcan
+parport                32635  4 pcan,ppdev,parport_pc,lp
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ sudo ifconfig vcan0 up
+vcan0: ERROR while getting interface flags: No such device
+
+That didn't work, but this apparently does
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ sudo ifconfig can0 up
+
+Get the network CAN utilities (SocketCan utils)
+svn checkout http://svn.berlios.de/svnroot/repos/socketcan/trunk 
+cd trunk/
+cd can-utils/
+make
+sudo make install
+
+candump/cansend let me test that loopback is working
+ams@temperance:~/projects/socketCan/trunk/can-utils$ candump can0
+  can0  5A1  [8] 11 22 33 44 55 66 77 88
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ cansend can0 5A1#11.2233.44556677.88
+
+No data obtained from ARM. Wireshark does seem to get a heartbeat signal from the CAN adapter. 
+
+Added correct bitrate option to /etc/modprobe.d/pcan.conf (formerly /etc/modprobe.d/pcan, renamed to stop modprobe whiging about 
+the missing ".conf"). The ARM defaults to 250kBps, the PCAN adapter defaults to 500kBps.
+
+Proper bitrate as follows:
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ cat /etc/modprobe.d/pcan.conf 
+
+#options parport_pc io=0x378 irq=
+# pcan - automatic made entry, begin --------
+# if required add options and remove comment 
+# options pcan type=isa,sp                              
+options pcan bitrate=0x011C
+install pcan /sbin/modprobe --ignore-install pcan
+# pcan - automatic made entry, end ----------
+
+# The possible settings for bitrates
+#define CAN_BAUD_1M 0x0014  // 1 Mbit/s
+#define CAN_BAUD_500K 0x001C  // 500 kBit/s
+#define CAN_BAUD_250K 0x011C  // 250 kBit/s
+#define CAN_BAUD_125K 0x031C  // 125 kBit/s
+#define CAN_BAUD_100K 0x432F  // 100 kBit/s
+#define CAN_BAUD_50K 0x472F  // 50 kBit/s
+#define CAN_BAUD_20K 0x532F  // 20 kBit/s
+#define CAN_BAUD_10K 0x672F  // 10 kBit/s
+#define CAN_BAUD_5K 0x7F7F  // 5 kBit/s
+
+
+Use of candump confirms that we are getting data from the arm, format hasn't been checked yet
+ams@temperance:~/Downloads/peak-linux-driver-6.20$ candump any
+  can0   D4  [2] 00 65
+  can0  4D4  [2] 01 80
+  can0  350  [8] 00 03 04 3B FC 81 03 24
+  can0  360  [8] 02 DB FA 3B FA D3 D8 F0
+  can0  37F  [0]
+  can0  350  [8] 00 03 04 3B FC 81 03 24
+  can0  360  [8] 02 DB FA 3B FA D3 D8 F0
+  can0  37F  [0]
+  can0  350  [8] 00 03 04 3B FC 81 03 24
+  can0  360  [8] 02 DB FA 3B FA D3 D8 F0
+
+12/17/2011
+
+Arm communiction over CAN works, have managed to get it to fold once. 
+
+When the arm is folded, the camera wires and cameras on the gripper cause it to get a blocked motor message just as it finishes folding. 
+This is probably the camera wires hitting the second arm segment from the gripper. 
+
+The arm probably needs to be manually unfolded to clear this before it can unfold automatically
+
+12/29/2010
+Had the arm print what I think are the positions in cartesian mode
+Still don't know where these points are measured from, but 1402mm = 1.402 meters, which is I suppose within reason
+The gripper cannot be open 6 meters, though, so that is bogus
+
+xSTATUS: Updated position(1): 350
+X: 1402.37 mm 
+Y: 21.736 mm 
+Z: 1410.79 mm 
+Roll:  107.8 degrees
+Pitch: 95.2 degrees
+Yaw:   126.1 degrees
+Gripper: 6108.96 mm 
+
+Had the gripper rotate (roll)  while keeping all other joints in the same position
+
+xSTATUS: Updated position(2): 360
+X: 1402.46 mm 
+Y: 21.648 mm 
+Z: 1410.75 mm 
+Roll:  109.5 degrees
+Pitch: 6388.6 degrees
+Yaw:   22.1 degrees
+Gripper: 6108.96 mm 
+
+The pitch shows change, but roll does not. This is because I put the wrong names with the values. 
+
+Looking at can_comm.cpp (The original code) there are three functions called out as position-based 
+control, and only one of them is ever called. pd_control2() is called from Decode(TPCANMsg* rcvMsg,TPCANMsg* xmitMsg).
+
+pd_control2() takes no parameters because the people writing it apparently thought global variables are the way and the light. 
+
+pd_control() (not pd_control2()) takes the robot position data, calculates the differences between those positions and the desired
+position, and multiplies each of them by a speed constant (defined in float Kp[6]={1,1,1,0.8,0.7,0.6};) to get the speed for each joint.
+Then it checks that those speeds are within preset limits and restricts them to the limit if they are. 
+
+There is a check for "rolling" which may have to do with either rotating past the 0 of an encoder or the mid-line coordinate flip. I think
+it is probably the 0 of the encoder. In pd_control2() the roll check is only done on the last joint, which should be the wrist roll joint
+
+The function does not send the speeds back to the arm, but leaves them in an array called speed, which is probably sent to the arm at 
+some later time. 
+
+pd_control2() does the same thing as pd_control() if home_pos_flag is set. 
+
+if set_point_vel is set, pd_control2() gets the positions, does a bunch of matrix math. 
+
+From the papers Kate sent me, world coordinate frame is Fw, the end effector coordinate frame is Fee, and the camera coordinate 
+frame is Fc. wRc is the transform matrix from world to camera, and is (wRee)(eeRc) that is, the world to end effector transform matrix
+multiplied by the end effector to camera transform matrix. 
+
+eeRc is a constant matrix defined by a calibration process
+
+wRee is defined as the dot product of  roll, pitch, yaw rotation matrices, which are apparently "standard" 
+
+Fw seems to have the origin at the top of the arm's "shoulder" (the column that attaches it to the base) 
+
+In the code:
+
+3x1 vectors found in the code
+-----------------------------------------------
+dee2c		- Might be distance offset of camera from gripper? Read as "distance end effector to camera"
+				  Defined as dee2c = 97.0, -11.0, -37.0;		These are pretty plausable distances in mm between the grippercams
+				  and the actual gripping part. 
+				  
+Vc			- products of speed vector Kv and previous error from desired position
+				  Probably XYZ linear speeds, only uses first three elements of speed vector
+
+Vw			- Velocities calculated from velocity vector and rotational error in end effector coordinate space. 
+				  Comment describes this as linear velocities when applying limits. It gets used for the first 3 values of speed[], 
+				  so probably the X, Y, Z velocities
+
+Ww			- Does not appear to be used
+
+Wc			- Vc is the first three elements of the velocity vector Kv times the first three position errors
+
+Wypr			- Product of speed vector and error_YPR, which is the difference of YPR_star and the position
+				  of the last three joints, which controll the roll, pitch and yaw of the end effector. This is used for the last three values
+				  of speed[], so it is yaw, pitch, and roll.
+				  It also gets used in calculating the XYZ velocities, probably to compensate for the camera position differences and thus
+				  allow positioning the center of the gripper's gripping area, rather than the center of the stereo camera.  
+				  
+We			- nRc2eep * Wypr
+				  nRc2eep is a normalized rotation matrix that I think means We will contain rotational error in end effector coordinate 
+				  space based on the speed vector and the camera coordinate space. 
+				  
+Rde			- Calculated in from We and dee2c
+				  Probably contains distance error in end effector coordinate space?
+				  All values get multipled by convert, which is (M_PI / 36.0f) / (50.0f * 0.022f);
+				  	The 0.022 in there is probably related to the 0.022mm XYZ distance increment
+				  	Possibly a conversion into rotation in distance over time instead of degrees?
+				  
+WeRde		- EE2C_transform( pos ) * Rde;
+				  Used to set Vw = Vc - WeRde, so Vw is probably rotational velocities, but I have no idea about the units
+
+YPR_star	- Yaw pitch roll something-or-other. Values set from pd, which is the "desired home position"
+				  Used in calculation of error_YPR as difference from YPR_star 
+
+3x3 Matrices found in the code
+--------------------------------------------------
+Rc2w			- Transform from camera coordinates to world coordinates
+					  Set to C2W_transform(pos), so recalculated based on current position
+
+Rxyz2ypr		- Based on Rc2w
+
+nRxyz2ypr	- Normalized version of Rxyz2ypr, which is apparently a "Rotation matrix"
+
+Rc2ee			- Transform from camera coordinates to end effector coordinates
+					  Defined as Rc2ee = 0, 0, 1, 1, 0, 0, 0, 1, 0;
+
+Rc2eep		- Defined as Rc2eep = Rc2ee * transpose(Rc2w) * transpose(nRxyz2ypr);
+					 Transform from camera to end effector coordinates times the transpose of the transform from camera to world coordinates
+					 times the transpose of the normalized rotation matrix. 
+					 Normalized to give nRc2eep
+
+nRc2eep		- Normalized version of Rc2eep
+
+Red				- EE2C_transform(pos) * dee2c 
+					  Probably the end effector to camera transform calculated from the position, multipled by the distance from the 
+					  end effector to the camera. 
+					  Used in calculating eprev1[], which is probably the previous error from the desired position
+
+and then stores the values in the speed[] array. The values in Wypr are for rotational speeds and the values in Vw are linear speeds?
+Vw is limited by a loop commented as "Limit Linear Velocity" 
+
+The updating is done in a if statement that checks to be sure if it has been more than 60ms since the last update. 
+This is probably because if you update faster than that, the newer messages replace the older ones.
+
+otherwise, pd_control2() does "translation (set-point move)". This is a lot like pd_control(), but with the loops broken out differently. 
+Instead of doing all of the speed calculation in one loop, linear speeds and rotational speeds are dealt with in separate loops. 
+Logically, the functionality in pd_control(), this mode, and home_pos_flag mode all look identical. I haven't verified this. 
+
+Different modes may be due to switching between 6-DOF motion and pure translation to accomodate limited 
+field of view from the camera. Kate sent a paper that mentions this. 
+
+The arm motion consisted of a gross phase to put the gripper camera at the center of a region of interest and align it so that it was
+looking "out of" that region of interest towards the thing it would try to grasp, and a fine phase that would do the actual grasping.
+
+12/31/2010
+With the current code, if you tell the arm to make too small of a motion, it will overshoot, attempt to compensate, overshoot again, etc. 
+The oscillation is visible. 
+
+1/2/2011
+Happy new year. 
+
+I had assumed that the axes, looking from the back of the arm, where it mounts to the frame, that the coordinate system had X as 
+left-right motion, Y as up-down motion, and Z as forward-back motion. The world coordinate system in the papers Kate sent appears 
+to have X as forward-back motion, Y as up-down motion, and Z as left-right motion.
+
+1/4/2011
+According to kate:
+(0,0,0) is the center of the shoulder. 
+
+My coordinate frame was from the left eye view. See attached.
+
+The <X, Y, Z > returned are values in world coordinates (in millimeters) with respect to the center of the left-eye 
+(Fshouldercamera in Figure 4), X is to the right of the center of the lens, positive Y is to downward of the center of the lens, 
+and positive Z is outwards from the lens.
+
+I don't know how the UCF coordinates were transformed unfortunately beyond what their papers said.
+
+When the arm isn't moving (all velocities are 0), is the cbox set to Cartesian? If not, the values won't mean anything.
+
+So the bogus values when starting up are from the arm still being in init mode.
+
+1/6/2011 
+Added Kate's paper on the click-to-grab interface to docs. This is where the above description of the coordinate frame comes from. 
+
+1/19/2011
+Some sort of problem with the initialization. It seems to be fine until I try to use the keyboard to move the arm. 
+Possibilities:
+	I'm using the wrong coordinate system
+	I'm acting based on stale data (esp. likely, see trace below)
+	
+DATA NOW VALID!																		This is init() finishing
+39.182,12.98,-37.114,107.8,144.8,34.4,-1000
+39.182,12.98,-37.114,107.8,144.8,34.4,-1000						I get the status in two places
+wTarget Position: 1781, 620, -1687, 1078, 1448, 344, 			I hit "w" to move the gripper up
+Position: 39.182,12.98,-37.114,107.8,144.8,34.4,-1000        Position output from ArmLinux.cpp
+1781, 590, -1687, 1078, 1448, 344, 										Position from the arm itself
+Error: 0, 30, 0, 0, 0, 0, 
+New speeds: 0, 30, 0, 0, 0, 0, 													These error and speed readings are legit
+
+Position: 1781, 590, -1687, 1078, 1448, 344, 
+Error: 0, 30, 0, 0, 0, 0, 
+New speeds: 0, 30, 0, 0, 0, 0, 													These look good too
+
+Position: 4976, -4622, 12590, 1078, 1448, 344, 
+Error: -3195, 5242, -14277, 0, 0, 0, 
+New speeds: -30, 30, -30, 0, 0, 0, 											WTF!
+
+Position: 4976, -4562, 12590, -38, 60, -1516, 
+Error: -3195, 5182, -14277, 1116, 1388, -1500, 
+New speeds: -30, 30, -30, 3, 3, -3, 
+
+Position: 4976, -4562, 12590, -38, 60, -1516, 
+Error: -3195, 5182, -14277, 1116, 1388, -1500, 
+New speeds: -30, 30, -30, 3, 3, -3, 
+
+Position: 4976, -4562, 12590, -38, 60, -1516, 						It persists in this manner for some time
+Error: -3195, 5182, -14277, 1116, 1388, -1500, 
+New speeds: -30, 30, -30, 3, 3, -3, 
+    
+Don't have a fix for this, but made some changes around avoiding sending the same packet more than once. 
+
+1/20/2011
+
+Arm wants to be in a specific position for cartesian moves. Assuming the arm mount points towards the "back" of the reference frame, 
+the shoulder should point 90 degrees off the mount to the right, the upper arm should parallel the mount, and the hand should be on
+the opposite side of the shoulder from the mount frame. 
+
+In other words, imagine it is mounted on the right front corner of a your wheelchair and you are reaching for something in front of you.
+
+2/25/2011
+
+Spent some time making a little toy gun work with linux instead. It's easier to control, but not as practical. 
+
+Now back to the arm. I'm getting a segfault when I try to init the arm, in part of the exception throwing code.  The segfault is me 
+writing bad exception code, the actual bug is that Ubuntu upgraded the kernel, so I had to rebuild and reinstall the module. 
+
+3/1/2011
+
+If I don't call moveCartesian, the arm's position doesn't change, but the values from the encoders also doesn't have the sudden change 
+that appears if I do call moveCartesian.  
+
+moveCartesian launches a new thread with the float target positions. Could be starting multiple instances of doMove. What happens if 
+I call doMove instead of moveCartesian (other than it blocking)?
+
+Target Position: -1794, 1263, -1208, -636, 816, 593, 
+Position: -1794, 1163, -1208, -636, 816, 593, 
+Error: 0, 100, 0, 0, 0, 0, 
+New speeds: 0, 30, 0, 0, 0, 0, 
+
+Target Position: -1794, 1263, -1208, -636, 816, 593, 
+Position: -1794, 1163, -1208, -636, 816, 593, 
+Error: 0, 100, 0, 0, 0, 0, 
+New speeds: 0, 30, 0, 0, 0, 0, 
+
+Target Position: -1794, 1263, -1208, -636, 816, 593, 
+Position: 15576, -4292, 3546, -636, 816, 593,					<-- WTF.  
+Error: -17370, 5555, -4754, 0, 0, 0, 
+New speeds: -30, 30, -30, 0, 0, 0, 
+
+Target Position: -1794, 1263, -1208, -636, 816, 593, 
+Position: 15576, -4202, 3546, -80, -647, 1193, 
+Error: -17370, 5465, -4754, -556, 1463, 240, 
+New speeds: -30, 30, -30, -3, 3, 3, 
+ 
+ 3/2/2011
+ 
+ Had semi-good results yesterday trying to make the arm move up and down. Looks like I have some oscillation on the output, possiblly 
+ because it is overshooting and correcting. 
+ 
+ Ubuntu upgraded my kernel again, so the can driver had to be reinstalled like so:
+ cd Downloads/peak-linux-driver-6.20/
+ make clean && make
+ sudo make install
+ sudo rm /etc/modprobe.d/pcan
+ sudo modprobe pcan
+ sudo ifconfig can0 up
+ 
+ Graphing the error shows that the arm does overshoot and correct significantly, and that the amplitude of the overshoot is about 
+ 160-250 units when told to move 1000 units. In cartesian mode, the units are 0.022 mm, so the amplitude comes out to about 
+ 0.5cm at worst. 
+ 
+ With some tolerance for slop built in, it now moves in a controled and useful manner. I set the slop tolerance at 300 units
+ (about 0.6cm), and that seems to give it good transitions between motions, and the ability to detect when it is "close enough"
+ 
+ +X is left, -X is right 
+ +Y is forward, -Y is backward
+ +Z is up, -Z is down
+ In the array that goes into doMove, X=1, Y=0, Z=2 (array indices)
+
+2/10/2012
+
+Upgraded to latest peak drivers
+The driver, hardware, or Linux is not compatable with USB 3.0
+	The device mostly works when plugged into a USB 2.0 port (still don't have it talking to the arm)
+The symptom of a bad bitrate (see above) is the adapter showing T -> empty diamond -> full diamond and then beeping
+continuiously. Good bitrate gets you T-> empty diamond -> full diamond -> 0 with a circle under it
+Remember to set the switchbox for transparent mode, or you'll feel really supid when it doesn't work. 
+
+ 
+TODO
+ - Add gripper control
+ - Add support for issuing a command, and having the next command override it
+ 	- doMove in thread, stop thread and start new one if a new command comes in
+ - Check if slop is sufficient for faster motion (will that need less precision?)   
 	
 	
