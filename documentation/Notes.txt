@@ -1,0 +1,1418 @@
+Georgia Institute of Tech
+	Laboratory for Neuroengineering
+	
+Kevin Warwick et al at Cambridge (Location correct?)
+
+(BakkumEtAl)
+	Cells cultured, mature in about 4 weeks 
+	2 year lifespan
+	Monolayer, easier to microscope
+	Spike-sorting algorithims
+	"Mussa-Ivaldi's group created the first closed-loop hybrot by controlling a Khepera robot with a brain stem slice from a sea lamprey"
+		Read this paper, different approach to brain, not as disassociated
+	Simulation as too simple
+		using real world gets the physics without complex simulation
+		real animals grow up in the real world
+		no learning the holes in the simulation
+	Algorithims
+		Firings integrated over time to produce "activity vector"
+			Does this mean pick an arbitrary "front" of the plate, match that to the front of the robot, and drive accordingly?
+			Locate the "center of activity" if it is front left of the plate, go forward and turn left?
+		Collision data fed back as stimulation
+			tight feedback loop (15ms)
+			"since we feel it is important that a tight connection between the neural system and its environment is likely to be crucial to adaptive control and learning"
+				I suspect that it's not anywhere near as important as consistency. I could deal with long lag, but not variable lag. 
+		Inter-stimulus Interval (ISI) set based on distance to object
+			averaged neural response used as motion command
+			How can we tell that this isn't a property of neurons (e.g. what is the gain here over just using some model of neurons or a set of if/then clauses?)
+				Speed of approach in follow task appears to be variable/learnable
+	"Blank slate"
+		    In the days when the Sussman was a novice, Minsky once came to him as he sat hacking at the PDP-6.
+
+    "What are you doing?", asked Minsky.
+    "I am training a randomly wired neural net to play Tic-tac-toe", Sussman replied.
+    "Why is the net wired randomly?", asked Minsky.
+    "I do not want it to have any preconceptions of how to play", Sussman said.
+
+    Minsky then shut his eyes.
+    "Why do you close your eyes?" Sussman asked his teacher.
+    "So that the room will be empty."
+    At that moment, Sussman was enlightened. 
+    
+	Some degree of neuroplasticity in the neural culture will allow "amputation" and "grafting" of sensors and outputs into the robot
+
+Novellino
+	Methods of selecting input and output points
+	Reactive obstacle avoidance
+	Virtual left and right "eyes" from sensors, converted into spike trains and fed into neurons
+		Coded as:
+			rate of stimulation proportional to sensor intensity (max rate 2hz)
+			binary coding, only triggers if sensor is over threshold (fixed 1hz rate)
+				Coding rates based on previous literature
+	Spike finding
+		Spikes are 4msec, so pan a single-spike-wide window along the signal
+		if the difference between the max and min in that window exceeds some threshold, you have a spike
+		threshold is proportional to standard deviation of noise
+		Also picks up stimulus artifacts
+			but those have a seperate, higher threshold to detect and remove
+	Rate coding
+		Apparently the way to go with neural interfaces
+	Selection of coefficients in the decoding code
+		Numbers chosen to reflect exitory relationships between sites
+		Values of motor speeds chosen to allow robot to turn sharply
+			Good for making most effective use of sensors
+	Cells mature after 18-42 days in vitro (DIVs)
+	Performance of processing on computer is a match with response time of neurons
+		1ms feedback loop, 4ms neuron response time
+		high-time dimension (lots of samples, lots of high-rate signals) means more time to deal with it
+	Also need high-performance neural links
+		if reaction takes too long, robot doesn't have time to turn
+		If reaction isn't reliable and repeatable, robot "tires out"
+			So, um, how is this any better than say, building a braitenberg vehicle with delay lines?
+				The actual research is in signal processing, neuron growth, link reinforcement, not robotics
+	Characterization phase
+		spontaneous action of neural network
+		stimulus-evoked activity
+		overall behavior of the network
+		finding the useful areas of the network
+			has no known a priori structure, the way a living brain does
+
+Warwick
+	Connected in a day, active in a week, stable after 30 days, lasts for 2-3 months
+	Postulates that development of network must happen in the presence of stimuli.
+	Cites work where neurons were used for real control problems
+		Better than prev two papers, where robots are just used for I/O because they are nifty
+	Another paper using MEABench, should look into this
+	Good brief explanation of input/output pair finding
+	Still seems like it doesn't really need the robot, more a matter of having it as a novel output device
+		Doesn't gain anything except apparently-random noise and unreliability as a result of having neurons in the loop
+	Says "neuronal structures/pathways that bring about a satisfactory action tend to strengthen purely through a process being habitually performed"
+		Completely elides that "satisfactory" has nothing to do with the neuron net.
+		It's not deciding that something is satisfactory. That is decided a priori, when selecting the connection pairs to use
+			This is like saying "We checked all the other roads, and this one is the best route. Isn't it a total surprise how good this route is?"
+
+Wagenaar, dynamic attractors
+	Cutures of allegedly-random neurons display complex, persistent patterns of activity
+	Reverberations due to feedback in the network
+	Patterns conserved over minutes or hours
+	Disassociated culture does not have cortical microstructure
+	Culture-wide bursts ("barrage" firing) mixed with periods of low activity
+		resembles in vivo activity of developing cortex, sleep spindles
+	Same regions have similar latency from start of a burst across multiple bursts (temporally and spatialy consistent behavior)
+	
+Wilson, McNaughton, Hippocampal Ensemble Code for space	
+	Hippocampal neurons "transmit an endsemble code for location"
+	Neat stuff, not as related because the brain has a structure, original embodyment, etc.
+	
+Mataric, Navigating with a Rat Brain
+	Rat hippocampus as model for spatial representation in robots
+	Cognitive models appear to combine topological and metric information
+		Not completely detailed metric information, nor complete topological information
+	Cites some of the McNaughton work on the actual rat hippocampus
+	
+Chao, CAT statistics
+	Mentions Ruaro 2005 work that allowed image processing and pattern recognition in MEA culture
+	Mentions problems with prexisting work
+		Mutual Information (MI), Cross-correlation Histograms (CCH), Shift-predictor cross-correlation histogram (SPCCH) and Joint Peri-stimulus Time 	Histogram (JPSTH) all only observe pairs of neurons
+		Firing Rate ignores temporal information
+		All covered methods ignore or neglect spatial information (Wagenarr stuff does deal with spatiotemporal organization)
+	Center of Activity
+		Center of mass if "mass" of a recording site is measured as activitiy at that site
+	Center of Activity Trajectory
+		Motion of center of activity over successive time intervals
+	CAT detects smaller changes in network synaptic weights than other statistics
+	Plasticity isn't evenly distributed in the network
+		Do they ever mention what causes more plasticity in a given location?
+	Higher frequency stimulation in this paper (tetanic, 20Hz)
+	Reference to "cortical songs" with 10's of seconds duration
+		Are these the attractors of the Wagenaar work?
+	Structure arises in diassociated cultures
+		May start out random, but form organization, some of which is based on stimulus
+	CAT is distinct from Population Coding, stuff like Hippocampal Ensemble Codes
+
+Bakkum, MEART
+	Two pneumatic arms, neurons in a MEA, connected over the internet
+	Video feedback converted to stimuli for neurons
+	Mentions lamprey brainstem controlling Khepera
+		Phototaxis using vestibular mechanisims
+			"The semantics of the stimulus (gravity vs. light) is not likely to play any substantial role here"		
+			Rate-coded signal is not semantic -> kinesthesia? Does anyone feel numbers as gravity?
+	Uses CAT, population vectors as the data to control the arm
+		Population vectors are sort of like the ensemble codes in the hippocampus
+	MEABench software
+	Failed to actually draw a square, but did display neural plasticity
+	
+
+Learning in Culture (Tom Shea, others?)
+	Increase in spikes during and after stimulation
+	Shift to lower amplitude during stimulation, higher later
+	So "learning" consists of increase in higher amplitude spikes
+	Inhibitory antagonist bicuculline prevents change to increased, higher amplitude spikes
+		Present during stimulation, so preventing something about the stimulation?
+		"inhibitory antagonist" means "antagonist to inhibitory signalling" not "antagonist which is inhibitory"
+		
+Serra, Chan, et al, Folate
+
+
+Activation functions
+	Step function
+		Used by original perceptron
+		transitions from 0 to 1 at some exact cutoff
+	Log-Sigmoid
+		sigma(t) = 1/(1+e^-bt)
+		where beta is a slope parameter (affects how steep the sigmoid curve is)
+		infinitely sharp sigmoid is step function
+			can transition from sigmoid to step while training?
+		Diffierintiable, which is important for training
+	Tan-Sigmoid
+		Arctan(x) 
+			Output more than tanh(x) outside of range between 1 and -1
+		tanh(x) levels out at 1 or -1
+	x/|x|-1
+		Has asymptotes at 1 and -1, so presacaling input is required
+	error function of (sqrt(pi)/a*x)
+		As a increases, sigmoid stretches
+		
+Create encog neural net
+Train and time training
+Test and time testing
+Change activation function
+repeat testing
+
+Having some trouble with convergence in Encog ANNs, using data set of number images from Flickr
+
+Replicating a MEA research project using an ANN, or set of ANNs wired as a representation of an MEA
+
+What Size Neural Network Gives Optimal Generalizatio? Convergence Properties of Backpropagation
+Steve Lawrence et al.
+	No local minima in 3-layer net with t-1 hidden units, where t is the number of training data entries
+		Nice, but useless, as a 30k entry hidden layer will take two forevers to train 
+			Paper calls this out in footnotes
+	Backprop is a gradient descent method
+	Using too few hidden nodes is generally worse than using too many (in terms of error)
+		Better in terms of speed, but being wrong faster isn't better. 
+	Tests don't control for overfitting, so if large networks overfit, this paper doesn't detect it
+	Overspecify network and use a validation set to determine when to stop training
+		Allows checking the generalization error, rather than the training error
+			Really care more about generalization error, as that reflects real use
+	Comittees of networks are better at dealing with noise
+	
+I am beginning to suspect that Encog is significantly buggy, at least in ways that I've been using it
+	It doesn't seem to converge, even with big training sets
+	Training on MEA data (admittedly, with a bug in the data loader) resulted in a network that returns all 0.00000001 for any input
+		May be a normalization problem, could rescale into -1 to 1 range or something like that
+		
+Opencv for ubuntu is kind of a mess
+  576  sudo apt-get install opencv
+  582  sudo apt-get install libopencv0 libopencv-dev python-opencv
+
+That installs python bindings and something sufficently opencvlike to compile programs that use opencv
+Unfortunately, capturing from a camera doesn't work
+
+ms@temperance:~/eclipse_workspace/NeuroCam/build$ sudo apt-get install libcv-dev libcv4 libcvaux-dev libcvaux4 libhighgui-dev libhighgui4
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following packages were automatically installed and are no longer required:
+  libtbb2
+Use 'apt-get autoremove' to remove them.
+The following packages will be REMOVED:
+  libopencv-dev libopencv0 opencv python-opencv
+The following NEW packages will be installed:
+  libcv-dev libcv4 libcvaux-dev libcvaux4 libhighgui-dev libhighgui4
+0 upgraded, 6 newly installed, 4 to remove and 5 not upgraded.
+Need to get 0B/8,180kB of archives.
+After this operation, 4,256kB of additional disk space will be used.
+Do you want to continue [Y/n]? 
+
+That installs something like opencv as well, and capturing from cameras works, but it also uninstalls opencv-python, 
+so you can either use cameras or use python, but not both. 
+
+Looks like I had a stale ppa hanging around that claimed that I needed the old opencv stuff for python. Removing it and doing apt-get update, 
+upgrade, and autoremove seems to have fixed it. 
+
+Training with error that is larger than the magnitude of your data is a BAD PLAN, as the function doesn't fit as well 
+as you might want. Setting the desired error lower makes training take longer, but fits function better. 
+ 
+https://www.aaai.org/Papers/AAAI/1990/AAAI90-118.pdf
+   Mixing training with GA for evolving neural nets. 
+   Doesn't give consistent, scalable results. Works well in smaller cases, not so great for larger cases
+
+http://iopscience.iop.org/0305-4470/21/1/030
+   HA HA HA WHAT. I wish I knew enough about magentic phsyics and spin models to understand any of this. 
+   Practical upshot is that Hopfield networks can store 0.14N random patterns due to interactions between the same neurons in different patterns
+   Neuron weights are mathematically similar to interacting magnetic fields / spins?
+   Correlated patterns increases storage space (like hippocamal ensamble coding for similar places exciting similar areas?)
+   Not crucial for my thesis, but cool
+   
+Command to train multiple networks on some set of fann files:
+for file in ../../data_sets/labview/col_0_hist_*; do ./singlesite -f $file -q 0.00001; done
+q is the desired error. 
+
+Training with prescaled data got all but the network with 40 inputs trained to 0.00001 error in 6-13 epochs, the one with 40 
+inputs has taken 3400 outputs and isn't done yet. Does seem to be coming down slowly. 
+
+The prescaling works by determining a scale factor that will get all the data into the 0-1 range of the sigmoid function, and an 
+offset that will make the lowest value in the data 0. See prescale.py for the math, currently, it is this:
+
+    maxOut = max(outputs)
+    minOut = min(outputs)
+    scale = (decimal.Decimal("1.0")/(maxOut-minOut))
+    offset = decimal.Decimal("0.0") - minOut
+    scaledOutputs = [(oldVal * scale) + offset for oldVal in outputs]
+
+ Hm. Just now noticed that FANN_SIGMOID_SYMMETRIC is tanh, which has a range of -1 < y < 1
+ But then, my prescaling is also bad. I've replaced it with the map function:
+ 
+ def rangeMap(value, in_min, in_max, out_min, out_max):
+    return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+
+http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=557662&tag=1
+Capabilities of a Four-Layered Feedforward Neural Network: Four Layers Versus Three
+Shin’ichi Tamura and Masahiko Tateishi
+ A three-layered network can give any N input-target relations exactly, given N-1 hidden units. 
+ A 4-layer network needs (N/2) + 3 hidden units to do the same thing
+ 	Inputs are effectively real numbers between 0 and 1, so need an infinite number of hidden units
+    Could break it up by bands?
+    	Would taking the FFT of the signal do anything useful?
+
+Output of training with normalized data, to 0.001 error. This is with my (0,1) buggy normalization, the script has since
+been updated to use a proper (-1,1) interval. 
+
+ams@temperance:~/eclipse_workspace/Thesis/fann/build$ for file in ../../scripts/python_scripts/scl*col_0*; do ./singlesite -f $file -q 0.001; done
+Input:1 Hidden:5 Output:1
+Max epochs   500000. Desired error: 0.0010000000
+Epochs            1. Current error: 0.0850021988
+Epochs           87. Current error: 0.0008907634
+Input:10 Hidden:17 Output:1
+Max epochs   500000. Desired error: 0.0010000000
+Epochs            1. Current error: 0.0052362503
+Epochs           48. Current error: 0.0004832034
+Input:15 Hidden:24 Output:1
+Max epochs   500000. Desired error: 0.0010000000
+Epochs            1. Current error: 0.0052467147
+Epochs           47. Current error: 0.0007230475
+Input:1 Hidden:5 Output:1
+Max epochs   500000. Desired error: 0.0010000000
+Epochs            1. Current error: 0.0052086115
+Epochs           64. Current error: 0.0009110135
+Input:25 Hidden:37 Output:1
+Max epochs   500000. Desired error: 0.0010000000
+Epochs            1. Current error: 0.0056117470
+Epochs           81. Current error: 0.0009990188
+Input:2 Hidden:6 Output:1
+Max epochs   500000. Desired error: 0.0010000000
+Epochs            1. Current error: 0.0055650384
+Epochs           64. Current error: 0.0006283479
+Input:40 Hidden:57 Output:1
+Max epochs   500000. Desired error: 0.0010000000
+Epochs            1. Current error: 0.0050974446
+Epochs           77. Current error: 0.0009727463
+Input:5 Hidden:10 Output:1
+Max epochs   500000. Desired error: 0.0010000000
+Epochs            1. Current error: 0.0051307627
+Epochs           53. Current error: 0.0004610686
+    	
+Plating simulation
+	25mm square glass dish, 60 electrodes, 200um between electrodes
+	Diameters of pads between 10 and 30um
+	Axon lengths less than 200um don't usually connect to another cell, start connecting after growth beyond 200um
+	Paper (Stochastic Simulation Model for Patterned Neural Multi-Electrode Arrays) gives random walk growth
+		After growth period, cells are connected if range from neuron to dendrite is ~20um
+		Also gives 300-700 cells per mm^2, so 25mm^2 gets 7,500 to 17,500 cells
+		Later mentions 800 cells/mm^2, so 20,000 cells in the dish
+			That's an OOM less than what my model estimates
+			My assumptions of a 50um soma, no stacking, and a 25,000um wide dish gives around 262,144 cells. 		
+	Effectively draw a donut around cell, with probability of connecting based on range. 
+	Need to determine probability function based on length of neural axons
+		Axons can be any length. Average?
+		Cell body is about 4-100um across
+		Dendrites are a few hundred um from soma at longest
+		Axons are any length, so could reach all the way across the culture
+			Assume minimum length same as dendrites, maximum same as culture dish
+			p of connection should be 0 near cell, grow beyond 200um, drop off slowly	  	
+	Setting up connections is n(n-1), which is kind of a goddamn disaster for computational complexity
+		Possible to lump the transfer functions between contact points?
+			Simulate neurons around/connected to a MEA site precisely
+			Base the transfer between precise neurons based on average density to neighboring contact points
+			Only perform some sort of "blurred" transfer between them
+				Approximate as one huge neuron, sum outputs and do integrate&fire?
+			This may end up losing complex forms like loops, CPGs, etc.
+			Also removes ability to record any neuron at will
+
+Cell distribution
+Caged neuron MEA: A system for long-term investigation of cultured neural network connectivity
+http://www.sciencedirect.com/science/article/pii/S0165027008004482 
+	Gives  1:1::neuron:electrode mapping
+	normal MEA has about 1% of neurons on electrodes
+		Neurons can migrate? Has anyone modled this?
+	Neuron body on electrode is key, axons insulated
+	40um wide wells, one neuron fits in that
+	110um spacing for a 4x4 array -> "each neuron could (potentially) form synapses with all others
+		Seems to contradict the "grow about 200um before connecting" rule from simulation paper
+	Need about 30k neurons to "condition the medium"
+		16 neurons won't survive
+		2mm standoff is sufficent to prevent connections between them
+	300 cells/mm^2 considered "low density"
+		Has ~55% surrvival at 3 weeks
+			Can I get away with plating 1/10th as many cells as I thought, and then whacking half of them?
+	Guestimates synapse counts from propagation delay of signals
+	Connectivity
+		20-50% connected (of possible connections, not neurons)
+		10-30% polysynaptic (has another neuron in the middle)
+		Mature networks, > 17 days in vitro
+		Connections are not reliable
+ 
+Synchronization of neurons in micro-electrode array cultures
+http://www.springerlink.com/content/u4p118577gn58685/fulltext.pdf
+	Networking increases days 1-6, decreases 6-10
+	Small-world organization
+		Most nodes not neighbors, but very short hop distance
+
+Small worlds wth power-law degree distribution are "scale-free"
+	Can choose degree distribution by assigning degree to each neuron in my network
+	Then assign connections with gaussian, until degree reached
+		This saves time by limiting connectivity
+	Preferential attachment method creates small worlds
+	Introducing time delay causes fractals, deterministic chaos
+	Fast way to generate:
+		D.Barmpoutis and R.M. Murray (2010). "Networks with the Smallest Average Distance and the Largest Average Clustering". arXiv:1007.4031 [q-bio.MN].
+		http://arxiv.org/pdf/1007.4031v1
+	Memory and neural networks
+		Cohen, Philip. Small world networks key to memory. New Scientist. 26 May 2004.
+		Sara Solla's Lecture & Slides: Self-Sustained Activity in a Small-World Network of Excitable Neurons
+
+The estimation of long-term memory characteristics in MEA neuronal culture recordings
+http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4649328&tag=1
+	1.6+/-0.6 * 10^3 cells per mm, so ~16,000 cells per mm^2
+		Again, an OOM less than I am playing with
+	Recordings from 6th DIV (day in vitro)
+		Matches synchronization paper with 6-17DIV for pruning
+		Transition from global to local bursting
+
+Architecture for Living Neuronal Network Control of a Mobile Robot
+Dimitris Xydas (Master of Science in Cybernetics. How cool is that.) 
+http://centaur.reading.ac.uk/1109/
+	Nothing to see here, just another case of robots being a novel output device
+	
+http://www.dtic.mil/cgi-bin/GetTRDoc?AD=ADA515409&Location=U2&doc=GetTRDoc.pdf
+Report from Thomas Shea
+	Glial cells important in modulating bursting
+		Glial-conditioned medium (GCM) stimulates spiking
+		GCM provides growth factors that cells need to network
+	25% inhibitory neurons, important for controlling signal patterns
+	Stabilized at 1 month
+	Culture process described in another paper
+	Less than 150 cells/mm^2
+		Very sparse
+		epileptiform signalling common, no settling down
+		bipolar signal, not stronger on positive or negative phase
+	More than 1000 cells/mm^2
+		Very regular bursting
+		Stronger negative phase than positive	
+	Bicuculline inhibits inhibitors
+		Makes dense culture act like sparse one
+		Dense culture has inhibitory activity above some threshold
+			Can probably tinker with this in my model
+
+TTX doesn't kill cells, but the sodium blocking kills organisms (by making breathing impossible)
+
+Do external stimuli, applied to train cultured cortical networks, disturb the balance between activity and connectivity?
+Joost le Feber, Jan Stegenga, and Wim Rutten, Member, IEEE
+	Super-dense culture (5,000 cells/mm^2)
+	400,000 cells over a chamber with a 20mm diameter (typical MEA array)
+	Determined connectivity between sites based on probability
+	probability to record firing at elecrode i at t=tau if one was recorded at electrode j at t = 0
+		Pairwise probability measure
+		if curve is not flat over time, neurons are connected
+			Does not deal with distingusihing polysynaptic/monosynaptic paths
+	
+http://www.newscientist.com/article/dn5012
+	Mentiones adding 10-20% "shortcuts" in a simple network creates loops
+	Self-sustaining activity
+		Yeah, Tilden called those microcores in the '90s. 
+
+http://online.itp.ucsb.edu/online/brain04/solla/oh/08.html
+	The reason that overconnecting won't lead to recurring chaotic regime
+	Need enough shortcut connections to re-inject into rested neurons
+	Need few enough shortcuts to allow neurons to rest
+		Too heavy and they tire out
+	Changing wave speed can affect this as well 
+		Polyneuronal loops would add propagation delay, even if individual neurons are same speed
+	Can have bistability, where persitent activity can be clobbered by a few neurons
+		Yes, just like microcores again. 
+
+Self-Sustained Activity in a Small-World Network of Excitable Neurons
+Alex Roxin, Hermann Riecke, and Sara A. Solla
+http://prl.aps.org/pdf/PRL/v92/i19/e198101
+	Scale-free networks
+		Small number of hubs with high connection number
+	Small-world
+		Many shortcuts
+		loose affiliation of tight groups
+			"small parts loosely connected" shows up again?
+	Coupled osccilatory elements
+		Shortcuts/small-world enhances syncronization
+		hubs/scale-free eliminates threshold for epidemic spread
+			No need to trigger at least M elements to get activity going
+	Behavior of SWN with increasing density p of shortcuts
+		low-p
+			persistent periodic activity
+			bistable with rest state
+		medium-p 
+			failure to sustain activity
+			Reentry of signal into neuron befor refactory period is up
+		high-p
+			long-lasting disordered activity
+	Delay also affects sustanance of activity
+		Sufficiently slow signals take long enough to return that refractory period expires
+	Loops of varying lengths 
+		Diversity of connections across time scales, as in LSM
+		Keep activity going in quiet periods
+			Pulse taking the long way around while the others rest
+		Can fail, depending on prior state of network, timing, etc
+		
+
+So combine the solla-style small-world networks with the Oja Rule or hebbian learning
+
+SIMONE: A Realistic Neural Network Simulator to Reproduce MEA-Based Recordings
+Ricardo Escolá, Christophe Pouzat, Antoine Chaffiol, Blaise Yvert, Isabelle E. Magnin, and Régis Guillemaud
+Very detailed simulation of electrode behaivor
+  Gain noise, tip size, etc. 
+Neurons in a plane
+Parameters for neurons
+  Probability of inhibitory/exitory
+  Probability of synaptic connection based on distance
+  Leaky integrated and fire neurons, euler's method to solve the equations
+Extracellular data acquisition model
+  Probes, conductivity, capacitance, etc. 
+They can apparently do brain surgery on cockroaches. Steady hands. 
+Very detailed, realistic simulation, lots of parameters
+Still no mention of learning
+
+Stochastic Simulation Model for Patterned Neural Multi-Electrode Arrays
+Dong-Soo Kahng, Yoonkey Nam and Doheon Lee*
+
+Chao paper mentions a neural circuit simulator that was designed by Wolfgang Maas (of Liquid state machine fame)
+In natschläger2003computer
+  stereotypical neural microcircuits as computational units
+    Tom's clusters, my small world network neighborhoods?
+    Neurocortical columns
+      May be semi-random, echo state or LSM style 
+  Includes a model of synaptic plasticity
+    This was missing from other MEA simulations, but not from this model
+      Probably in other models as well
+      What do they use as the update algorithm?
+        Hebbian-style learning algoirthim. Rats, that covers what I was going to do. 
+    Provides connectivity model
+
+A Fresh Look at Real-Time Computation in Generic Recurrent Neural Circuits
+http://www.lsm.tugraz.at/papers/lsm-fresh-148.pdf
+  No task-dependent organization in neural circuits (e.g. a "pizza recognizer" circuit)
+  Continuious computation on continuious streams
+  Structural similarity across brain areas and species
+    Highly diverse, dynamic response across multiple time scales
+    High recurrence
+    No "stable" state
+  Don't need to construct circuits, can use large and complex found circuits
+    This arguably means that you could compute with the weather, if you could build inputs and readouts
+      Such as wind farms and weather sattelites 
+      Cool idea for Sci-fi, that. 
+  Gives a connectivity structure, neuron parameters for neuron simulation
+  Uses perceptron learning for recognizers
+    Neuron pool is randomly wired, within the given constraints for wiring. 
+  
+Computational Models for Generic Cortical Microcircuits
+http://www.lsm.tugraz.at/papers/lsm-feng-chapter-149.pdf
+  Most of the same stuff as "A Fresh Look..."
+    Down to the sentences
+  Prediction of motion using LSM with spiking neurons
+    Predicting motion of a ball or rod across a 8x8 field of sensors
+    Got fairly accurate results despite no preprocessing, "motion" or "rate" sensors, etc. 
+
+Real-Time Computing Without Stable States: A New Framework for Neural Computation Based on Perturbations
+http://www.lsm.tugraz.at/papers/lsm-nc-130.pdf
+  Talks about some other models
+    recurrent circuits of spiking neurons that can simulate turing machines
+      Needs synchronization
+      Falls apart if there is noise
+     "dynamical recognizers"
+    Tend to need to converge to a result (brains don't seem to do this, or do it continuiiously)
+  Dynamic neurons (current state depends on previous state, leaky I&F)
+  	NEEDED for long-term information storage
+  	Neuron operation on 30ms scale, information stored for 100s of ms
+  20% long-distance connectivity
+  	Low connectivity and high connectivity result in poor performance
+  "Hence for this classification task the ideal “liquid circuit” is a microcircuit that has in
+addition to local connections to neighboring neurons also a few long-range connections, thereby
+interpolating between the customarily considered extremes of strictly total connectivity (like in a
+cellular automaton) on one hand, and the locality-ignoring global connectivity of a Hopfield net
+on the other hand."
+	In other words, it should be a small world network
+  Adding more columns (neocortical columns, water bowls, simulated networks) adds computational power
+  	Flexible computation as required for task
+  	Massive parallelism
+      Can be implemented on FPGA, analog devices pretty easily
+
+Fun plan -> Use rat brain cells as liquid for liquid state machine, train recognizer on output
+  This could make things like image recognition, etc. pretty easy
+  Just uses untrained neurons for mapping to higher-dimensional space
+  Comparing this to a robot running the simulation may be useful, or at least amusing
+  	Differences in failure cases may be cool (crash incidences)
+  	
+
+Heirarchy of detectors? Detector output as data for input to higher-level soups?
+So picking out color and shape, and then combining those into higher identities?
+  
+Toward the Neurocomputer: Image Processing and Pattern Recognition With Neuronal Cultures
+http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1396377&tag=1
+Maria Elisabetta Ruaro, Paolo Bonifazi, and Vincent Torre
+	Training cultures to recognize spatial patterns in images
+	8*10^5 cells/mm^2, so very dense culture
+	Tetanizing signal, 40 pulse train at 0.9v (wow, that's huge)
+	1-1 pixel to MEA site mapping
+	Reliability of output as vision data decays fast 
+		Don't seem to be using a classifier on the output
+		  may get better reliability as state decays away from original stimulus
+	Learned response to repeated stimuli
+		higher levels of response after multiple stimulations
+			Super-userful for a neuron-based robot
+	
+The "Liquid Computer": A novel Strategy for Real-Time Computing on Time Series
+Thomas Natschlager, Wolfgang Maass, Henry Markram
+http://www.lsm.tugraz.at/papers/lsm-telematik.pdf
+  Lays out basics of seperation property and approximation property
+    Seperation property
+      Everything relevent to the differences between two time series of inputs are present in the liquid state at a later point
+      In other words, different inputs at an earlier time will result in different states later
+      	Eventually, all output fades to rest state
+      Prohibits a truly chaotic network, too sensitive to new inputs
+      Prohibits too structured a network, or new inputs don't get mixed in 
+    Approximation property
+	  The readout can approximate a continuious function that maps a liquid state to an output
+	  ANNs are universal function approximators, so...
+        Use apropriate outputs as training input
+        Or rock the hebbian learning
+  Model using postsynaptic response as short-term memory
+    response based on previous signals
+    individual neurons react differently to incoming trains
+
+The “echo state” approach to analysing and training recurrent neural networks – with an Erratum note
+Herbert Jaeger
+http://www.faculty.iu-bremen.de/hjaeger/pubs/EchoStatesTechRep.pdf
+	Section 5 implements echo state with Leaky I&F neurons
+	
+A Statistical analysis of Information Processing Properties of Lamina-specific cortical microcircuit models
+Stefan Haeusler, Wolfgang Maass
+http://www.igi.tugraz.at/haeusler/papers/162.pdf
+	Neocortex is a multilayered structure
+	Columns have about 100um diameter
+	Has information on column connectivity in layers
+		Doesn't directly apply to planar culture
+	Connectivity probabilities between layers don't get over 0.55, usually closer to 0.2
+	4:1 inhibitory (so 25%, pretty close to the magic number ~20%)
+	Laminar circuit has better ability to distinguish/classify two inputs than amorphous circuit
+		Better scalability, orderly layers avoids chaos with increasing scale
+	Output neurons only watch about 1 in 7 to 1 in 5 neurons, not all neurons
+	
+http://www.lsm.tugraz.at/papers/lsm-nips-147.pdf
+
+P-delta learning rule
+  Lots of unconnected perceptrons, care about population response above a threshold
+  non-binary output
+  
+A New approach towards Vision suggested by Biologically Realistic Neural Microcircuit Models
+http://www.lsm.tugraz.at/papers/lsm-vision-146.pdf
+	768 neurons, leaky integrate-and-fire, 20% inhibitory
+	
+Input Prediction and Autonomous Movement Analysis in Recurrent Circuits of Spiking Neurons
+  Robert Legenstein, Wolfgang Maass, and Henry Markram
+  Support for vision, motion prediction, multi-use LSM using neural model
+  Uses predicting ANNs to get future motion, where object will leave visual field
+  Good for building a robot you can throw ping-pong balls at
+  Support for biological plausibility of Hebbian learning
+  Parameters for model all given in methods section
+  	Membrane time constant 30ms
+  	Refractory period 3ms excitory, 2ms inhibitory
+  	fire at -55mV
+  	rest/reset at -56.5mV
+  	input resistance 1MOhm
+  	background current 13.5nA (gradual build to firing anyway, regardless of input?)
+  	Probability of connection depends on neuron types
+  		C * e ^(-(D(a,b)/lambda)^2)
+  			lambda controls average connections and distance between connected neurons
+  			D is euclidian distance between neurons a and b
+  			C depends on neuron type
+  				excitory-to-excitory 0.4
+  				excitory-to-inhibitory 0.2
+  				inhibitory-to-excitory 0.5
+  				inhibitory-to-inhibitory 0.1
+  	Model for properties of connections cites other paper, gives parameters
+  		Again parameters depend on neuron types at the ends of the connections. 
+  Neghboring regions of sensor project onto neighboring regions of network
+  	Probably not required, as recognizers could learn any output
+    Recurrent feedback came back to same region, not cross-region
+
+On the computational power of circuits of spiking neurons
+Wolfgang Maass, Henry Markram
+	Neural microcircuits as basic microarcitecture used for diverse computational tasks in different brain areas
+		Want to build universal computer out of generic circuits
+	All computable digital functions (class of recursive functions)
+		All can be computed by turing machines
+		So anything that can compute computable digital functions is turing-equivalent
+		Intended for serial, offline, digital processes
+	Neurocomputers are not digital, are functions on a time series
+		Input and output are time series, related by a mapping function/operator/filter
+		Filter sensory data into movement through space
+	Filters in levels
+		linear is level 1, polynomial up to infinite level
+		Even simple neural circuits are at infinite level
+		Basis filters at bottom of hierarchy, measure the complexity of a target filter in terms of # of basis filters needed
+	Realtime processing as filtering
+		Separation of input functions by multiple basis filters drawn from a pool and composed into filter L
+		Transformation of output of filter L into target output by fixed, memoryless output map f (perceptron)
+		Constantly variable output state of L, read by f
+		L may retain up to all state of input stream
+	Echo state network
+		Discrete time and iterative update rather than direct observation of continuious state.
+	M-dimensional filter <=> M 1-dimensional filters
+	Universal computational power over a class of operations on analog functions of time
+		Clockless	
+		Time invariant filters don't care about wall clock time, shifting input shifts output
+		Noise causes memory to fade
+	Turing simulation is doomed by noise, as noise/fade ends the possibility of infinite recall (no tape rewind)
+		No biologically relevant computations are eliminated by focus on filters with fading memory
+		Formal definition of fading memory is that over long enough time, all fading memory filters subside to approximately the same value.
+			So one stable state, single attractor basin
+	"We will show in section 3 of this article that liquid state machines (LSMs) with basis Filters from some class B and 
+	readout maps from some class F have under mild conditions on B and F universal computational power with regard to all 
+	time invariant fading memory computations on continuous functions of time, in the sense that any time invariant fading 
+	memory filter F can be approximated by an LSM M from this class up to any given degree of precision."
+		B must be pointwise seperable, for distinct input series, there must be a point where they can be distinguished
+			Paper gives examples, delay filters and exponential filters
+				Both easy to implement out of neurons
+		F must be able to approximate desired continuious function on the reals to an arbitrary precision > 0
+	Generic recurrent i&F neurons map time-distributed input into spatial output (e.g. turning a sound to an image)
+	Can approximate FF ANN with spiking neurons (so the perceptrons can be spiking neurons too!)
+	Can use random generic neuron pool
+		ANN/Perceptron/whatever learns output mapping to desired function
+	 
+Movement generation with circuits of spiking neurons
+  Also uses prediction to improve movement accuracy
+  Brings it back to monkey neurons
+  	hand trajectories can be recovered from firing activity of neurons in motor cortex by taking weighted sum of activity
+  	This is super-useful for robot, as motor velocity commands can read as weighted sum of activity
+  	Again with the 600-700 neurons, 20% inhibitory, small-world etc. 
+  	
+http://www.pnas.org/content/95/9/5323.full
+	Gives synaptic dynamics for remaining efficacy of a synapse at a given firing rate
+	
+Methods for transducing output into spike trains
+	What is the encoding?
+		Spike frequency?
+		Spike distribution?
+		
+Perceptrons
+	By You-Know-Who
+	"little of significance" changed in the field 1969-1988 (AI winter?)
+		
+Generalized integrate-and-fire models of neuronal activity approximate spike trains of a detailed model to a high degree of accuracy
+  Renaud Jolivet, Timothy J. Lewis, and Wulfram Gerstner
+  http://jn.physiology.org/content/92/2/959.full
+  Evidence that a simple I&F model is suffient to duplicate spike timing of a more complex conductance-based model
+  	~70% temporal correspondance
+  	Good support for my selection of a simple model for performance reasons
+  Detailed model is Hodgkin-Huxley
+  Suggests review papers Gerstner and Kistler 2002; Maass and Bishop 1998
+  "standard leaky IF models do not correctly reproduce neuronal dynamics close to the firing threshold"
+  Equation of I&F neurons like the one used in my model (as of 1/4/2011)
+  Calculation of concidence factor
+  	Good method to do determine if a simulated network acts like a specific biological network
+  	Same reaction to same spike trains will lead to high coincidence
+  "For the first step, we make use of the observation that the shape of an action potential of the fast-spiking neuron model is always roughly the same, independently of the way the spike is initiated."
+  	Cute trick for avoiding some of the math, SIMONE uses this
+  	Templates, played back based firing time
+  Model is optimized for certain frequencies
+  	Caused by assumptions in the frequencies chosen for the model from which the I&F model is derived
+  	 
+Hidden Causal Motifs in the activity of cultured networks: Are they footprints of hybrid information processing by the neurao-glia fabric?
+  Itay Baruchi and Eshel Ben-Jacob
+  Includes glial cells, not a monoculture
+  	"it is known that structured spontaneous activity is generated in cultured networks only if they are made of both neurons and glia"
+  correlation of syncronized burst events (SBEs) by within-burst activity
+  	SBE is 200ms window where most neurons fire, with minimal activity between them
+  	Shows patterns, similar motifs appear repeatedly
+  "each of the sub-groups has its own characteristic correspondence between the neurons physical position in the network and their "temporal locations" within the bursts."
+  	Possibly based on how long it takes the "wavefront" (assuming there is such a thing) to get to that location?
+  "dendrogram algorithm"?
+  Math appears to have maximal gnarl
+  	recorded activity transformed to normalized correlation 
+  	  normalized by distance in correlation space
+  	principal component analysis to map into 3-D manifold
+  	  results in groups or something?
+  Proposes that the existance of grouped/correlated SBEs points to the existence of functional groups of neurons causing them.
+  Attempts to "fingerprint" each group with a characteristic inter-neuron firing correlation
+  Neural networks apparently need a sufficient level of activity survive
+  	Glial cells may help in generating this activity in the absence of stimulus
+  	"Power neurons" glia cause neurons to form self-synapses, drives lots of activity
+  	
+Functional Holography of Recorded Neuronal Networks Activity
+  Itay Baruchi and Eshel Ben-Jacob  
+  Combination of cortcial and glial cells (What are we using?)
+  Syncronized burst events, as above, with staistically recognizable subgroups
+  Math appears to be the same approach as above
+  	Uses correlaton in a space other than physical spacing between sample sites
+  	Degree of correlation is used as a "distance" in the space to normalize inter-neuron correlations
+  	Projected into a 3-D space whose axes are leading eigenvectors derived from principal components algorithim
+  	(Whut? Clearly I have some math reading to do)
+  	Allows for a graphical representation/"fingerprint" of bursting events
+  	  Bursting events can be grouped by similarity of fingerprints
+  Suggests that each group represents a functional information processing unit within the culture
+  Has some support for linked cluster layout that Tom mentioned:
+	  "Higher density cultures on ~1 mm2 areas
+	form a web of neuron clusters linked by axon
+	bundles (Segev et al., 2003). This is a hint that
+	the cells are “programmed” to form networks
+	with special characteristics."
+  Allows mapping of how activity proceeds within a subgroup of the SBEs
+  	Similar timing patterns of activity propagation over space occur within each group 
+  Calculated affinity matricies to measure similarity? "affinity"? between neurons
+  Clusters may have different physical shapes when mapped into real layout
+	  Preliminary results sug-
+	gest that, in some cases, the localized clusters in
+	the affinity space will also correspond to clus-
+	ters that are localized in real space, but in other
+	cases they can represent distributed clusters.
+  Do the clusters display any recognizable patterns or sequences of between-cluster/across-cluster activity?
+  Results appear similar to those from recordings in real brains
+  	So similar activity patterns and layouts?
+  
+Harnessing nonlinearity: predicting chaotic systems and saving energy in wireless telecommunication
+  Herbert Jaeger, Harald Haas
+  Use of Echo State Networks as a learning mechanisim to predict chaotic time series
+  	...weather? Stock markets?
+  Cannot obtain analytical models in some cases, so must resort to black-boxes
+  	Duplicate behavior without duplication of mechanism
+  	  Super-useful for duplicating, say, a dish of neurons. Just sayin'...
+  ESN is recurrent ANN
+    maintains activity in absence of input (like real neurons) and has dynamic memory (shades of Solla's small world networks)
+    Very large network (500-1000 neurons)
+    Only output readout neurons are tuned in learning, others are left as (random?) soup
+    	Hence the relation to LSM, ESN is the liquid of the LSM, output neurons are the perceptron/readout
+    Sparse interconnectivity in the working set of ESN (1% connected, so very loose/sparse coupling)
+  Weights calculated based on sum of square errors and allowed to run
+  	Deviation became significant after 1300 time steps
+  	Refining the training method improved this significantly, refinement in another paper?
+  Small set of variable weights leads to fast train-run cycles
+  	Online learning possible. 
+  Tests were done on model of a wireless system, got two OOM improvement for high signal/noise ratios
+  	Not run on a real wireless system. Son, I am disappoint. 
+  "could eventually be exploited to control prosthetic devices by signals collected from a collective of neurons"
+  	Boy, if only I knew someone who was working on that. 
+  	Title not given for citation
+  Supporting material PDF is full of useful details. 
+    http://www.sciencemag.org/content/suppl/2004/04/01/304.5667.78.DC1/Jaeger_SOM.pdf
+    
+Short term memory in Echo State Networks
+  Herbert Jaeger
+  Mostly just good for description of ESN configuration and units required to get good results
+  
+Simple models for reading neuronal population codes
+  H. S. SEUNG AND H. SOMPOLINSKY
+  Methods for reading out from a large set of neurons to produce an answer
+  Mostly around visual/orientation cues, but probably pretty open-ended
+  
+Papers for changeover to new computer
+  The “echo state” approach to analysing and training recurrent neural networks – with an Erratum note
+    Herbert Jaeger
+    
+
+
+Epileptiform.dat
+	187500 bytes
+	93750 16-bit values
+	1562.5 16-bit values divided by 60 channels
+		No such thing as a half value, so this makes no sense
+	3125 8-bit values divided by 60 channels
+		Or 16 bit values divided by 30 channels
+		Or could all be one channel, don't have any easy way to tell
+	Jill says:
+		60 channels, all signals, 3125 samples
+
+How Connectivity, Background Activity, and Synaptic Properties Shape the Cross-Correlation between Spike Trains
+  Srdjan Ostojic, Nicolas Brunel, and Vincent Hakim
+   Possible simplification of a network into 60 points and their related cross-correlation functions (CCFs)
+   May be overly complex, but could derive CCFs from recorded data
+   Simulation of specific dish should have same CCFs as original
+      Could be used as fitness function for hill-climbing/genetic algorithim approach
+   Math seems to be based on geting correlation spectrum and converting into CCF iwth inverse FFT
+      Ow, my head.
+
+Python interfaces to the Manus ARM
+	Ctypes
+		Doesn't seem to play well with C++ OO concepts
+		The arm interface is a singleton object, so no way to return it from getInstance, call its methods, etc. 
+	SWIG
+		Doesn't generate compilable code
+			At least, not with any combination of flags that I could find. 
+			Probably prone to weirdness, as singleton is not instantiated directly by constructor
+	Writing my own wrapper
+		ArmModule.cpp is the interface code
+		setup.py is the build desrciption, run with "python setup.py build"
+		Install with "python setup.py install"
+		The module is called "manusarm"
+
+Labview files created from .xlsx files
+	Open file in OO.org calc, copy-paste data into labview_skeleton.lvm
+		Make sure there are not blank lines at the end of the files
+	Files are tab-separated, 60-channel plus timestamp, 30k samples
+	All these channel numbers assume channel numbers start at 1, not 0
+	mature_culture.lvm
+		Two groups of channels that have synchronous bursting
+		7, 19, 24, 32, 40, 47, 48, 53 all burst together
+		20, 21, 28, 29, 33, 49, 54, 55 burst together and seperate from the others
+	young_culture.lvm
+		6, 16 burst together
+		26, 42 burst together
+		38, 45 burst together
+
+		This is what the limits of my scrollback buffer caught of running my burst detector on the young culture:
+
+      23826, 27387, 28257, 28258, 28259],
+ 18: [23, 3688, 3689, 5188, 5189, 5190, 9834, 9835, 17514, 17515, 22558, 22559, 22560, 22561, 27388, 27389, 28255, 28256],
+ 19: [1826, 3688, 3689, 3690, 6072, 25247, 28245, 28246, 28257, 28258],
+ 20: [5373, 5374, 9828, 9829, 9830, 12093, 17668, 17669, 18328, 28258, 28259],
+ 21: [21, 1258, 1728, 2310, 5376, 13826, 17667, 17668, 28258, 28259],
+ 22: [6, 238, 3688, 27388, 27389, 27390, 27391, 27392, 27393],
+ 23: [1239, 2372, 3249, 3250, 10828, 11714, 21160, 22960, 25553, 26550, 26551, 26552, 27142, 29736, 29737],
+ 24: [1258, 1259, 1260, 1826, 3688, 5377, 5378, 17729, 17730, 27388],
+ 25: [201, 202, 203, 301, 1363, 3689, 23160, 23246],
+ 26: [227, 17668, 22619, 22620, 26277, 27388, 28257, 28258],
+ 27: [267, 268, 269, 270, 271, 272, 5785, 17731, 17732, 23158, 23159, 27389],
+ 28: [6, 1258, 1356, 2640, 17732, 17733, 18328, 26007, 28257],
+ 29: [23319, 23320, 26008, 27392, 27393, 28244, 28245, 28246],
+ 30: [6, 7, 86, 87, 88, 89, 90, 91, 102, 103, 104, 105, 106, 107, 108, 109],
+ 31: [61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 117, 118, 119, 120, 121, 122, 123, 2927, 3251, 3688, 3689, 4497, 10219, 10515, 10516, 10517, 14326, 14782, 14783, 14990, 16549, 16712, 16713, 16714, 18140, 20506, 22522, 22523, 26873, 27136, 28031, 28032],
+ 32: [148, 149, 3688, 3689, 8338, 8522, 15391, 17668, 22618, 22619, 22620, 23159, 26276, 26277],
+ 33: [9, 10, 266, 267, 268, 269, 270, 1257, 1258, 2795, 2796, 3477, 3689, 11826, 12562, 12563, 17667, 17668, 18327, 22619, 22620, 28257, 28258, 28259, 28260],
+ 34: [6, 1257, 2191, 2192, 22558, 22559, 27387, 27480, 27481],
+ 35: [18329, 27475, 28379, 28380],
+ 36: [8, 9, 10, 4381, 6585, 12025, 17671, 17672, 17673, 24730, 28257],
+ 37: [23, 2005, 3688],
+ 38: [478, 479, 22617, 22618, 22619, 22620, 23342, 24218, 25103, 26071, 26072, 26073, 28256, 28257],
+ 39: [3689],
+ 40: [186, 1256, 1257, 14291, 23157, 23158, 23342, 27388, 28257, 28258, 28259, 28260],
+ 41: [7, 8, 9, 2192, 2193, 2194, 13307, 18328, 22617, 22618, 22619, 23156, 27826, 29179],
+ 42: [7, 8, 9, 10, 1434, 1435, 1436, 1437, 1438],
+ 43: [3687, 5607, 23337],
+ 44: [9, 10, 267, 17428, 17658, 17666, 26273, 26274, 27388, 29102, 29103, 29104, 29105, 29106],
+ 45: [6, 7, 8, 265, 266, 267, 1426, 3688, 3689, 3690, 4490, 17667, 17668, 18515, 21991, 28384],
+ 46: [230, 3688, 13356, 13685, 26096],
+ 47: [4126, 13004, 13191, 15272, 19248, 23001, 23133, 23163, 23164, 28946],
+ 48: [7, 8, 9, 3684, 5787, 17739, 17740, 17741, 22556, 24287, 27391],
+ 49: [7, 8, 9, 241, 1258, 1259, 12470, 15614, 28385],
+ 50: [89, 14292, 14293, 18395, 18396, 21513, 26579, 26580, 27388, 27389, 27603, 27682],
+ 51: [1258, 3689, 4761, 7887, 9824, 9825, 9826, 9827, 9828, 12316, 17666, 17667, 22618, 22619],
+ 52: [22, 1257, 1258, 1358, 3688, 14293, 19830, 22617, 22618, 23338, 23339, 23340, 23341, 26008, 27453, 27454],
+ 53: [1257, 26092],
+ 54: [7, 8, 9, 10, 11, 7085, 8168, 9615, 17667, 17668, 17669, 17670, 22560, 22561, 22562, 22563, 22564, 28246, 28247, 28633, 28634],
+ 55: [8159, 13285, 13286, 18331, 20662, 22557, 23130, 28257],
+ 56: [6, 7, 8, 190, 191, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372],
+ 57: [818, 1257, 1258, 1259, 3689, 5193, 13067, 17006, 22557, 22558, 26273, 26274, 27386, 29249],
+ 58: [1257, 3688, 8359, 17728, 17729, 18998, 18999, 23160, 24687, 27389, 28936]}
+
+The results don't seem to agree
+	my burst metric is different from bio lab's metric
+	I use 5 consecutive values of more than 3 times the standard deviation
+	
+20, 21, 26, 32, 33, 45, 54 all detect a burst at time 17668
+
+Connecting the arm cameras
+
+bttv linux drivers cannot operate the camera capture card Imagenation PCX200AL
+From: http://lists.mobilerobots.com/pipermail/pioneer-users/old/msg00869.html
+"The Video4Linux driver does not work with the PXC-200 because ImageNation
+has a MAX517 (8-bit DAC) on the I2C bus which needs to be initialized. The
+V4L driver (actually bttv) does not do this because no other Bt8x8 based
+framegrabber requires this... I suppose you could hack the V4L driver with
+the appropriate code (you can copy it from the bt848 driver sources).
+
+As an alternative, Alessandro Rubini has written a PXC200 specific driver
+(does not work with other BT8x8 boards). You can download it from:
+
+        ftp://ftp.systemy.it/pub/develop        (original)
+        ftp://ftp.prosa.it/pub/people/rubini    (nightly mirror)
+
+This driver ("pxc") is known to work with both 2.0 and 2.2 kernels."
+
+Unfortunately, the pxc driver site is down, and is at least 10 years old now (2.4 kernels were in 2001).
+
+I installed the Hauppauge card from the box of JR. stuff. bttv driver picks it up but doesn't show an image. 
+
+[ 5212.460292] bttv: driver version 0.9.18 loaded
+[ 5212.460296] bttv: using 8 buffers with 2080k (520 pages) each for capture
+[ 5212.460355] bttv: Bt8xx card found (0).
+[ 5212.460380] bttv0: Bt878 (rev 17) at 0000:0f:00.0, irq: 18, latency: 32, mmio: 0xdc101000
+[ 5212.460457] bttv0: detected: Hauppauge WinTV [card=10], PCI subsystem ID is 0070:13eb
+[ 5212.460460] bttv0: using: Hauppauge ImpactVCB (bt878) [card=143,insmod option]
+[ 5212.460463] IRQ 18/bttv0: IRQF_DISABLED is not guaranteed on shared IRQs
+[ 5212.460502] bttv0: gpio: en=00000000, out=00000000 in=00ffffff [init]
+[ 5212.460579] bt878 #0 [sw]: Test OK
+[ 5212.460627] bttv0: tuner absent
+[ 5212.460681] bttv0: registered device video0
+[ 5212.460712] bttv0: registered device vbi0
+[ 6024.327375] bttv0: unloading
+[ 6034.766873] bttv: driver version 0.9.18 loaded
+[ 6034.766877] bttv: using 8 buffers with 2080k (520 pages) each for capture
+[ 6034.766934] bttv: Bt8xx card found (0).
+[ 6034.766958] bttv0: Bt878 (rev 17) at 0000:0f:00.0, irq: 18, latency: 32, mmio: 0xdc101000
+[ 6034.767019] bttv0: detected: Hauppauge WinTV [card=10], PCI subsystem ID is 0070:13eb
+[ 6034.767023] bttv0: using: Hauppauge (bt878) [card=10,autodetected]
+[ 6034.767027] IRQ 18/bttv0: IRQF_DISABLED is not guaranteed on shared IRQs
+[ 6034.767069] bttv0: gpio: en=00000000, out=00000000 in=00ffffff [init]
+[ 6034.769576] bttv0: Hauppauge/Voodoo msp34xx: reset line init [5]
+[ 6034.769650] bt878 #0 [sw]: Test OK
+[ 6034.820233] tveeprom 0-0050: Hauppauge model 64405, rev C1  , serial# 5119575
+[ 6034.820237] tveeprom 0-0050: tuner model is Unspecified (idx 2, type 4)
+[ 6034.820240] tveeprom 0-0050: TV standards UNKNOWN (eeprom 0x01)
+[ 6034.820243] tveeprom 0-0050: audio processor is unknown (idx 127)
+[ 6034.820245] tveeprom 0-0050: has no radio
+[ 6034.820247] bttv0: Hauppauge eeprom indicates model#64405
+[ 6034.820249] bttv0: tuner absent
+[ 6034.820319] bttv0: registered device video0
+[ 6034.820345] bttv0: registered device vbi0
+[ 6034.820399] bttv0: PLL: 28636363 => 35468950 .
+[ 6034.821061] bttv0: PLL: 28636363 => 35468950 .
+[ 6034.821068] bttv0: PLL: 28636363 => 35468950 .. ok
+[ 6034.843393]  ok
+[ 6034.853342]  ok
+[ 6850.515589] bttv0: PLL can sleep, using XTAL (28636363).
+[ 7083.710622] bttv0: PLL: 28636363 => 35468950 .. ok
+ 
+Doing this: http://lists.fedoraproject.org/pipermail/users/2006-December/323593.html
+makes xawtv not crash every time I change inputs, which is arguably better than its previous behavior (the crashing), 
+but it still shows a black screen for all inputs. Also, it still crashes when closing. 
+
+This is xawtv-3.95.dfsg.1, running on Linux/x86_64 (2.6.32-41-generic)
+xinerama 0: 1920x1080+0+0
+xinerama 1: 1920x1080+1920+0
+WARNING: No DGA direct video mode for this display.
+WARNING: Your OpenGL setup is broken.
+
+...Runs "normally" for a little while, then I go to close it...
+
+ *** glibc detected *** /usr/bin/xawtv: double free or corruption (out): 0x00000000026a9c60 ***
+======= Backtrace: =========
+/lib/libc.so.6(+0x77806)[0x7f72b0344806]
+/lib/libc.so.6(cfree+0x73)[0x7f72b034b0d3]
+/usr/bin/xawtv[0x42b54d]
+
+Cheese gets flat blue input. 
+
+Some of the problem was the camera or cable being bad (replaced with a different camera). That didn't help xawtv, but at 
+least it did fix it with TVTIME
+ 
+It would be good to get a copy of  "Recording action potentials from cultured neurons with extracellular 
+microcircuit electrodes" by J. Pine, as it covers a lot of early MEA stuff, but it doesn't seem to be openly available. 
+
+TODO:
+Write code to send red values of each segment to labview listener
+Extend labview listener to stimulate dish according to red values received
+
+NI-DAQ
+	Two flavors, Traditional NI-DAQ (old and busted) and NI-DAQmx (the new hotness)
+	NI-DAQmx has a lot of multithreading, so expect signal generation and acquisition threads
+	Should be able to simply run in a loop, getting the data, checking the counts, and delivering the stimuli
+	
+	Looks like the API is something like this to get data:
+	
+    analogInTask = new Task();
+
+    analogInTask.AIChannels.CreateVoltageChannel( ... );
+
+    analogInTask.Timing.ConfigureSampleClock( ... );
+
+    analogInTask.Start();
+	
+	
+NI-DAQ rant
+	NI-DAQ appears to be a heap of proprietary crap, built on more proprietary crap
+	You can code, or you can use layer upon layer of code generation and have no idea what anything is doing
+	Even if you want to write ANSI C, they recommend you use LabWindows/CVI and DAQ Assistant 
+		instead of,	you know, typing the fucking code
+	
+DT-Open Layers
+	For controlling the DataTranslation DT9814
+	
+
+Orange clustering for Apophenia
+	Is perhaps harder than expected because of trying to get the data in a useful format. 
+	
+Metrics for analysis of output
+	Activity metrics
+		Spike timing
+			inter-spike interval distribution
+				Code written, in metrics.py
+			mean and standard deviation of spike timings
+				Code written, in metrics.py
+			epileptic vs normal signalling
+				TODO: Execute metrics.py on recorded data 
+				Est. 1 day or less
+		Spike location 
+			CAT fingerprinting
+				Code exists in Jon's work
+					TODO: incorporate into metrics.py
+					Est. 3 days, mostly debugging
+					TODO: Determine comparison method
+						Can I use euclidian hyperdistances for this?
+						Some form of clustering?
+						Vector similarity calculations, with time and CAT coordinates?
+					Est. 5 days, different approaches to try
+			per-node activity distribution
+				TODO write code, score each node by spikes recorded/total spikes
+				Est. 3 days. 
+			cross-correlation functions
+				TODO write code, pairwise CCF
+				Est. 1.5 weeks, lots to write and debug. May have large runtimes.
+		Periodicity of activity
+			Code written for DFT over data, can detect frequency peaks
+			
+	Topological metrics
+		Motif detection
+			TODO: write code based on paper
+			Est. 1 week
+		Shortcuts and diameter
+			Code written for measurement in simulation
+			TODO: Find out how to do this for real cells?
+		In-degree distribution
+			TODO: Paper cite for poisson distribution, simulation produces same distribution
+			This is a configurable parameter, so not all that meaningful as a measure of similarity
+		All very hard to compare to real networks
+		
+	Other code to write
+		Record the activity of a simulated network in the same format as is used to record live networks
+		Est. 1.5 weeks
+		
+	
+	Existing code that might be useful
+		spike_detector.py
+			Has a few classes for detecting spikes, some intended to work in realtime
+			can get away with post facto spike detection, operating on log data and neuron recordings
+				Should get neuron recording output into Labview format
+				Generate a common report format
+		burst_checker.py
+			Uses spike detector to 
+		labviewloader.py
+			In the common directory, loads labview data files for processing
+		graph_analysis.py 
+			some of the topological metrics
+				
+Runtimes of various sizes of dish:
+20000 um across:
+ams@robot-lab7:~/Projects/ams_thesis/plating_simulator (master*)$ time python ./SeedMea.py 
+260100 348100 0.747199080724
+total:  162529.0
+expected:  260100
+surplus:  -97571.0
+Cells remaining: 105725.0
+Building connectivity... done.
+Saving connectivity... done.
+
+real	818m50.122s
+user	816m21.820s
+sys	0m14.210s
+
+Yes, that's 818 minutes, as in 13 hours and change, just to build the connectivity. 		
+		
+5000 um across:
+14400 21609 0.666389004581
+total:  10030.0
+expected:  14400
+surplus:  -4370.0
+Cells remaining: 6548.0
+Building connectivity... done.
+Saving connectivity... done.
+
+real	3m38.972s
+user	3m33.240s
+sys	0m2.780s
+
+3 minutes and change. This is 2.5 times the 2000um case, and 15 times slower, so it appears to be exponential.  
+
+4000 um across:
+8100 13924 0.581729388107
+total:  6501.0
+expected:  8100
+surplus:  -1599.0
+Cells remaining: 4196.0
+Building connectivity... done.
+Saving connectivity... done.
+
+real	1m25.620s
+user	1m24.170s
+sys	0m1.200s
+
+1 minute 25 seconds. Doubling the size sends the runtime up by 5 times.   
+
+2000 um across:
+900 3481 0.258546394714
+total:  1598.0
+expected:  900
+surplus:  698.0
+Cells remaining: 555.0
+Building connectivity... done.
+Saving connectivity... done.
+
+real	0m12.478s
+user	0m8.350s
+sys	0m4.080s
+
+12 seconds and change. This is just barely bigger than the sensing area, so it neglects a lot of the culture area. 
+
+
+ --- Notes from Mary about Labview and C ---
+ 
+HI Abe
+the C code generator is active until April - I don't know if it blows up after that (if we can't get the full license) so anything made using this probably has to be copied out into a text file or something to be saved 
+
+If you need to log in to National Instruments for any of the card-related stuff or license activation crap, they are registered to:
+
+mary_guaraldi@student.uml.edu
+password: laser01
+
+the UML license for all Labview programs is M21X73230
+
+PyNN: A Common Interface for Neuronal Network Simulators
+	pp13: Uses distribution of inter-spike intervals as a metric of statistical 
+		properties
+	"To measure the difference between the distributions from two different 
+		runs we use the Kolmogorov–Smirnov two-sample test."
+	Some initial conditions result in highly different inter-spike-intervals
+		May not be the most solid metric for reproducibility
+	
+"A configurable simulation environment for the efficient simulation..."
+http://www.sciencedirect.com/science/article/pii/S0893608009001373
+	Same model I'm using 
+		80/20 excite/inhib 
+		Izhikevich neuron model
+		Excite are RS (a=0.02,b=0.2,c=−65,d=8), inhib are FS (a=0.1,b=0.2,c=−65,d=2)
+	Time dependent delays (I should add this)
+	STDP I should add this too
+	Seem to be getting much more low-level dynamics than me, or graphing them better
+	NVIDIA GTX-280
+	
+BRIAN uses PP (parallel python) 
+	PP is for SMP, not for CUDA/GPU cores
+	100,000 neuron limit due to memory limitations (1GB)
+	
+Current hardware in system is:
+	NVIDIA Corporation GF114 [GeForce GTX 560 Ti] (rev a1)
+	NVIDIA Corporation NF200 PCIe 2.0 switch (rev a3)
+		PCIe 2.0, so can't run a Tesla 40k
+	Two 16x lanes, listed as in use
+	
+Notes from Holly on paper for future use (paper due in < 15 hours as of this writing)
+	Motion track of cup as well as motion track of arm would add a lot of meaning to the ros bag output graphs
+		Can extract, don't have time now
+	Show the simulated culture real video recording
+		Doesn't really close the loop, no feedback (recording doesn't change)
+		Really want to speed up culture simulation, show it live video
+		
+Neural Signatures of Cell Assembly Organization - Kennith D. Harris (2005)
+   "Cell Assembly" - group of cells that are driven to fire together
+      Repeated co-activation of assembly strengthens relationship
+      Activity across assemblies over time "phase sequence"
+         Similar to looking for patterns of spatiotemporal activity that are related/correlated?
+         This is a lot like Tom's language stuff, structural basis for it
+   Dogma is rate coding vs temporal coding
+      Nothing on spatiotemporal/ensemble coding?
+      Coding is kind of a bizarre idea, at least in any formal way
+         There isn't an MP3 stored in your brain
+         Computer model of thought has damaged people who think about thinking
+   Activity is never a simple representation of input, also has pre-existing state and activity
+   Phase sequence has temporal pattern
+      Even if stimulus that started it does not
+   Neural synchrony may correlate with "top-down" cognitive activity
+      Attention, novelty, expectancy
+   Coordination timescale 10-30ms
+      Matches membrane time constant, EPSP width of pyramidal neurons, gamma oscillation in hippocampus, synaptic plasticity window
+	
+Aquila - An Open-Source GPU-accelerated Toolkit for Cognitive and Neuro-Robotics Research
+   Martin Peniak, Anthony Morse, Christopher Larcombe, Salomon Ramirez-Contla and Angelo Cangelosi
+   Developmental robotics, learning the environment from experience
+   Integrated bootstrapping of action, social interaction, and language
+      As in children
+      So, uh, why hasn't anyone raised a robot, guys?
+   C & C++, talks to the iCub robot over YARP
+      Also OpenCV, speech recognition... busy busy busy
+   Lots of iCub specific stuff
+      e.g joint stiffness and damping, like No Child, Ever has to deal with
+   Oooh, Echo State Network implementation
+   Multi-timescale recurrent neural network MTRNN (research this)
+      Sensors -> self-organizing map -> MTRNN -> motion commands
+   Overall more a report on a specific technology than a how-to for GPU stuff
+   
+Using Parallel GPU Architecture for Simulation of Planar I/F Networks
+   Jan-Phillip Tiesel and Anthony S. Maida
+   LIF model
+   Converged to oscillating global firing
+   Square grid, implemented in terms of textures and shaders
+      Effectively "rendered" looking directly at it, so output ends up in the correct locations on the output texture
+   no learning
+   
+NeMo: A Platform for Neural Modelling of Spiking Neurons Using GPUs
+   Adreas K Fidkeland, Etienne B Roesch, Murray P Shanahan, Wayne Luk
+   Calls out embodied simulation as requiring realtime performance
+   40,000 neurons 4M spikes/sec, Izhikevich model
+   Tesla GPU core
+   Partition neurons based on local connectivity
+      Inter-partition neurons allowed as well
+   Conduction delays
+      spikes enqueued, pulled from queue after delay
+   Clustering of structure of simulator mirrors clustering of structure of brain
+   Good explanation of threads, warps, memory management
+   Doesn't appear to implement STDP
+   
+NeMo appears to be effectively the simulator I would write, only better written. 
+   Contribution of my thesis could be combination of analysis to simulate a specific culture with simulation
+   In other words, make it explicitly about uploading
+   
+A Novel Multui-GPU Neural Simulator
+   C. M. Thibeault, R. Hoang, F. C. Harris Jr.
+   Izhikevich neurons in CUDA
+   Multiple GPUs within one computer 
+      Not multicomputer (although that's probably possible)
+   Uses file types defined by others
+   No STDP (again)
+   
+GPGPU implmentation of a synaptically optimize, anatomically accurate spiking network simulator
+   R Sorciconi
+   CUDA, Izhikevich, HAS PLASTICITY for excitatory synapses
+   Weird implementation of homeostasis
+      Does this have any real basis in biology, or is it just to stop strength from climbing without bound?
+   
+GPU-based Simulation of Cellular Neural Networks for Image Processing
+   Ryanne Dolan and Guilhereme DeSouza  
+   CNNs use a grid of cells, neighbor connections
+   Not super-well related
+
+A multi-GPU algorithim for large-scale neuronal networks
+   Raphael Y. De Camargo, Luiz Rozante, Siang W. Song
+   CUDA, Hodgkin-Huxley neurons (!)
+   Lots of performance testing, speedup in comparison to CPU
+
+A GPU Based Simulaton of Multilayer Spiking Neural Networks
+   Izhikevich, all Fast Spiking
+   Layer structure as in a multilayer perceptron, looks fully connected in diagrams
+   No mention of STDP or LTP/LTD
+   Distance-dependent connection delay, but the same at all connections
+   
+Neuromorphic Models on a GPGPU cluster
+   Bing Han and Tarek M. Taha
+   20-177fold speedup
+   Izhikevich update is 13FLOPS (can compute theoretical best possible time)
+   Has STDP for training
+   Multicomputer (32 node cluster), multigpu (Tesla S1070, 1/host)
+   Network doesn't seem to have been recurrent
+   Pulse-coding version of multilayer perceptron?
+   Hundreds of thousands to nearly 9.5M neurons
+      Less than a frog, more than a cockroach, on par with a zebrafish
+      
+An Improved GPU Simulator For Spiking Neural P Systems
+   "Membrane Computing"
+   Nondeterministic and Maximally parallel
+   Not super-well related to what we're doing, I think. 
+         
+Simulation of Large Neuronal Networks with Biophysically Accurate Models on Graphics Processors
+   Mingchao Wang, Boyuan Yan, Jingzhen Hu and Peng Li	
+   HH models, because neurological conditions are based on actual neurophysiology
+   Calls Izhikevich model "Phenomonological"
+      That is, concerned with phenomenon, not causes
+   "Typically, a time resolution of one millisecond, which is comparable to the minimum axon delay, is adopted for simulating neural networks"
+      Iiiiiinteresting. 
+   Time step size is constrained by integration method, too small can lead to instability
+   
+Evaluation of GPU architectures using spiking neural networks
+   Vivek K. Pallipuram, Mohammad Bhuiyan, Melissa C. Smith
+   9.5 million neurons
+   Compares Radeon and Fermi GPUs
+   Compares Izhikevich, Wilson, Morris Lecar, and HH neurons
+	Uses OpenCL rather than CUDA
+	   Not platform specific
+	   Has details on optimization techniques
+   File is corrupted, crashes PDF reader when I try to read beyond page 3
+   
+A Comparative study of GPU programming models and architectures using neural networks
+   Vivek K. Pallipuram, Mohammad Bhuiyan, Melissa C. Smith
+   Same study as "Evaluation of GPU architectures using spiking neural networks", but 46 pages long?
+   Uses a 2-layer MLP with the input layer on the GPU and output on the CPU
+      Transferring weights to GPU would eat the performance gain from running on the GPU
+      This network isn't recurrent
+   CUDA apparently performs better than OpenCL and OpenCL's performance isn't portable
+      (no shit, running on different hardware gets you different results)
+   CUDA has Zero Copy, OpenCL does not
+      Overlaps memory transfers with kernel operations
+   
+GPU Implementation of Spiking Neural Networks for Color Image Segmentation
+   Ermai Xie, Martin McGinnity, QingXiang Wu,  Jianyong Cai, Rontai Cai
+   GPU beats CPU, 31 times faster
+   
+GPU-Based Implementation of Real-Time System for Spiking Neural Networks
+   Dmitri Yudanov advised by Dr. Muhammad Shaaban
+   3840 neurons with Parker-Sochacki numerical integration
+   Izhikevich model
+   
+Bluehive - A Field-Programmable Custom Computing Machine for Extreme-scale Real-time Neural Network Simulation
+   Communication-centric FPGA implementation of neural network
+   64k neuron, 64M synapses
+      Claims real neuron fan-out ~= fan-in ~= 1000, uncited
+   DE4 boards from Terasic
+   Izhikevich model
+   Implements weights and delays for signal propagation
+   "It has been shown that interconnect in mammalian brains can be analysed using a variant of Rent’s rule which is often used to analyse communication requirements in VLSI chips [8]"
+ 
+Closing the Loop: Stimulation feedback systems for embodied MEA cultures
+   Potter, Wagenaar, DeMarse
+   Supports my call for richer recording and stimulation (more than 2 channel)
+   Also has a lot of the same conclusions I did about embodiment
+      sensory input is a function of recent output
+      consequences of actions good for moving in the world
+      continuous input/output
+   Indicates that MEA culture dishes can be damaged. Perhaps why we are not seeing signals?
+   Why cultures die
+      Osmolarity of culture increases due to evaporation 
+      Airborn pathogens
+      Oxidative damage due to oxygen-rich incubation environment
+   Teflon membrane prevents infection and molarity problems
+      Managed to ship cultures across the country
+   Talks about MEABench, which doesn't appear to be in active development. 
+   Spike detection threshold
+      Adjusts with a 1-second time constant to match RMS background
+      Per-electrode thresholds
+      Spike shape criterion used to confirm spikes
+   Only stores spike time, electrode number, and spike "context" (recording around spike time)
+      Saves on storage space
+   Active line-noise filter 
+      Claims notch filters are a bad move, because they remove gamma oscillations near 60Hz
+   Uses voltage-controlled positive-first biphasic pulses
+      Current-controlled has problems with excessive voltage, leakage, unknown electrode impedences
+      Pulse width has little effect as long as parasitic capacitances in the system can charge
+         400uSec in their system
+      "Amplitude is the main determinant of stimulus efficacy"
+   Lots of suggestions for stimulus artifact suppression
+   RACS Realtime All-channel Stimulator
+      Realtime Linux
+      I think this is what they already have upstairs
+   64-CNS
+      Looks Arduino-based (8Mhz uC, plugs into top of MEA-1060)
+      Interfaces via USB
+   Really neat imaging work
+   This paper covers enough stuff that I'm having a hard time coming up with something that is an original contribution to the field
+      "Uploading" would be, but I expect chaos theory to bite me in the ass on that one   
+    
+A Collision Avoidance Model Based on the Lobula Giant Movement Detector Neuron of the Locust
+   Not really related to my work, but pretty neat
+   
+   
+	
+	
