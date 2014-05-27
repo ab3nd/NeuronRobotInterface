@@ -1,0 +1,8 @@
+prefix=/home/dpickler/Work/neurobotics/catkin_ws/install
+
+Name: activation_vector
+Description: Description of activation_vector
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/dpickler/Work/neurobotics/catkin_ws/install/lib 
+Requires: 

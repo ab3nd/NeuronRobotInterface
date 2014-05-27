@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "zanni")
+set(zanni_MAINTAINER "ams <ams@todo.todo>")
+set(zanni_DEPRECATED "")
+set(zanni_VERSION "0.0.0")
+set(zanni_BUILD_DEPENDS "roscpp" "std_msgs" "message_generation")
+set(zanni_RUN_DEPENDS "roscpp" "std_msgs" "message_runtime")
+set(zanni_BUILDTOOL_DEPENDS "catkin")

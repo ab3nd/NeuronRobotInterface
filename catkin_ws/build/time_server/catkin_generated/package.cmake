@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "time_server")
+set(time_server_MAINTAINER "Abraham Shultz <orphrey@gmail.com>")
+set(time_server_DEPRECATED "")
+set(time_server_VERSION "0.0.0")
+set(time_server_BUILD_DEPENDS "message_generation" "roscpp")
+set(time_server_RUN_DEPENDS "roscpp" "message_runtime")
+set(time_server_BUILDTOOL_DEPENDS "catkin")

@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "interact_sim")
+set(interact_sim_MAINTAINER "ams <ams@todo.todo>")
+set(interact_sim_DEPRECATED "")
+set(interact_sim_VERSION "0.0.0")
+set(interact_sim_BUILD_DEPENDS "rospy" "std_msgs" "img_slicer" "neuro_recv")
+set(interact_sim_RUN_DEPENDS "rospy" "std_msgs" "img_slicer" "neuro_recv")
+set(interact_sim_BUILDTOOL_DEPENDS "catkin")

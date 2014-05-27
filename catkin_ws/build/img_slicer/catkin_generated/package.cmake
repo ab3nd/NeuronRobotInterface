@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "img_slicer")
+set(img_slicer_MAINTAINER "ams <ams@todo.todo>")
+set(img_slicer_DEPRECATED "")
+set(img_slicer_VERSION "0.0.0")
+set(img_slicer_BUILD_DEPENDS "roscpp" "common_libs" "OpenCv" "message_generation" "zanni" "practical_socket")
+set(img_slicer_RUN_DEPENDS "roscpp")
+set(img_slicer_BUILDTOOL_DEPENDS "catkin")

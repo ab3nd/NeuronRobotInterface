@@ -1,0 +1,8 @@
+prefix=/home/dpickler/Work/neurobotics/catkin_ws/devel
+
+Name: dish_viz
+Description: Description of dish_viz
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/dpickler/Work/neurobotics/catkin_ws/devel/lib 
+Requires: 

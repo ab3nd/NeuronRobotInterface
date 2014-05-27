@@ -1,0 +1,8 @@
+prefix=/home/dpickler/Work/neurobotics/catkin_ws/install
+
+Name: practical_socket
+Description: Description of practical_socket
+Version: 0.0.0
+Cflags: -I/home/dpickler/Work/neurobotics/catkin_ws/install/include
+Libs: -L/home/dpickler/Work/neurobotics/catkin_ws/install/lib -lpractical_socket
+Requires: 

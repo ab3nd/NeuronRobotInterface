@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "volt_distr")
+set(volt_distr_MAINTAINER "ams <orphrey@gmail.com>")
+set(volt_distr_DEPRECATED "")
+set(volt_distr_VERSION "0.0.0")
+set(volt_distr_BUILD_DEPENDS "roscpp" "neuro_recv")
+set(volt_distr_RUN_DEPENDS "roscpp")
+set(volt_distr_BUILDTOOL_DEPENDS "catkin")

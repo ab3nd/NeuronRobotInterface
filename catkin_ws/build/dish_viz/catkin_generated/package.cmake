@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "dish_viz")
+set(dish_viz_MAINTAINER "ams <ams@todo.todo>")
+set(dish_viz_DEPRECATED "")
+set(dish_viz_VERSION "0.0.0")
+set(dish_viz_BUILD_DEPENDS "roscpp" "burst_calc")
+set(dish_viz_RUN_DEPENDS "roscpp")
+set(dish_viz_BUILDTOOL_DEPENDS "catkin")

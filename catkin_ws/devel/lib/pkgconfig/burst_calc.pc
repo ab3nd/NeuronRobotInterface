@@ -1,0 +1,8 @@
+prefix=/home/dpickler/Work/neurobotics/catkin_ws/devel
+
+Name: burst_calc
+Description: Description of burst_calc
+Version: 0.0.0
+Cflags: -I/home/dpickler/Work/neurobotics/catkin_ws/devel/include -I/home/dpickler/Work/neurobotics/catkin_ws/src/burst_calc/include
+Libs: -L/home/dpickler/Work/neurobotics/catkin_ws/devel/lib -lbuffer_spike_detector
+Requires: roscpp message_runtime

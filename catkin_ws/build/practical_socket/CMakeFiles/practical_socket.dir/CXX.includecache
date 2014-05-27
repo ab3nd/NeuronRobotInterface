@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/dpickler/Work/neurobotics/catkin_ws/src/practical_socket/include/PracticalSocket.h
+string
+-
+exception
+-
+
+/home/dpickler/Work/neurobotics/catkin_ws/src/practical_socket/src/PracticalSocket.cpp
+PracticalSocket.h
+/home/dpickler/Work/neurobotics/catkin_ws/src/practical_socket/src/PracticalSocket.h
+winsock.h
+-
+sys/types.h
+-
+sys/socket.h
+-
+netdb.h
+-
+arpa/inet.h
+-
+unistd.h
+-
+netinet/in.h
+-
+cstring
+-
+cstdlib
+-
+errno.h
+-
+

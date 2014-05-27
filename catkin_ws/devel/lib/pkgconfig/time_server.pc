@@ -1,0 +1,8 @@
+prefix=/home/dpickler/Work/neurobotics/catkin_ws/devel
+
+Name: time_server
+Description: Description of time_server
+Version: 0.0.0
+Cflags: -I/home/dpickler/Work/neurobotics/catkin_ws/devel/include
+Libs: -L/home/dpickler/Work/neurobotics/catkin_ws/devel/lib 
+Requires: roscpp message_runtime
