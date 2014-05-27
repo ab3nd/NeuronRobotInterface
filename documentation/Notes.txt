@@ -1882,4 +1882,32 @@ TODO
  	- doMove in thread, stop thread and start new one if a new command comes in
  - Check if slop is sufficient for faster motion (will that need less precision?)   
 	
+
+Getting everything set up on a new system (as of 5/27/14)
+	Install ROS Hydro
+		sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu precise main" > /etc/apt/sources.list.d/ros-latest.list'
+		wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+		sudo apt-get update
+		sudo apt-get install ros-hydro-desktop-full
+
+	Install eclipse or other editor for editing code
+		sudo apt-get install eclipse
+
+	Install git and clone the repo
+		sudo apt-get install git-all
+		git clone git@code.cs.uml.edu:neurons/neurobotics.git
+
+	Add this to your .bashrc
+		# ROS configuration
+		source /opt/ros/groovy/setup.bash
+
+	You probably have a broken toplevel CMakeLists.txt symlink in neurobotics/catkin_ws/, fix it like this:	
+		rm CMakeLists.txt && ln -s /opt/ros/hydro/share/catkin/cmake/toplevel.cmake CMakeLists.txt
+	
+	Install a bunch of packages
+		sudo apt-get install libcomedi0 libcomedi-dev plotutils libplot-dev
+
+		sudo add-apt-repository ppa:berndporr/usbdux
+		sudo apt-get update
+		sudo apt-get install iir1-dev iir1
 	
