@@ -14,7 +14,7 @@
 //Used in normalization
 #define SIGMA (0.1)
 
-double ActVector::euclidianDistance(double a[], double b[])
+double ActVector::euclidianDistance(double a[], const double* b)
 {
 	double total = 0;
 	for (int ii = 0; ii < 60; ii++)
@@ -77,8 +77,8 @@ void ActVector::run()
         	}
 
         	//Compare this activaton vector to the known ones
-        	float leftDist = euclidianDistance(normActivation_, lAct);
-        	float rightDist = euclidianDistance(normActivation_, rAct);
+        	float leftDist = euclidianDistance(normActivation_, action::lAct);
+        	float rightDist = euclidianDistance(normActivation_, action::rAct);
 
         	//printf("%f,%f,%f\n", leftDist, rightDist, fabs(leftDist-rightDist));
 

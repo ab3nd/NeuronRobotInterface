@@ -234,6 +234,11 @@ void TeleopArmKey::print()
     printf("Lift[%d] Speed[%d]\n", cmd_.states[7], cmd_.speeds[0]);
 }
 
+void quit(int sig)
+{
+    tcsetattr(kfd, TCSAFLUSH, &cooked);
+    exit(0);
+}
 
 
 /*!
