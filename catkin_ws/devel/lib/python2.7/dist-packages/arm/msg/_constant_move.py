@@ -16,6 +16,7 @@ int8[8] states
 int8[7] speeds
 bool query
 bool quit
+
 ================================================================================
 MSG: std_msgs/Header
 # Standard metadata for higher-level stamped data types.

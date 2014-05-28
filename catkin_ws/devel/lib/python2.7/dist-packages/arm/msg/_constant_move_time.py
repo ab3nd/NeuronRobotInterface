@@ -42,6 +42,7 @@ int8[8] states
 int8[7] speeds
 bool query
 bool quit
+
 """
   __slots__ = ['header','end','move']
   _slot_types = ['std_msgs/Header','time','arm/constant_move']

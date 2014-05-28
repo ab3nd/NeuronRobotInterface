@@ -66,6 +66,7 @@ private:
     double lastFrame[60];
     double activation_[60];
     double normActivation_[60];
+    
 
 
     //Not great with unsplit culture

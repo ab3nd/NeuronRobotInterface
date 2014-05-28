@@ -25,7 +25,24 @@ double ActVector::euclidianDistance(double a[], const double* b)
 }
 void ActVector::callback(const neuro_recv::dish_state::ConstPtr& d)
 {
-	if(buf_.isBuffered())
+	if (d->last_dish)
+        {   
+            
+            ROS_INFO("Stopping arm!");
+            //stops arm movement
+            arm::constant_move cmd;
+            cmd.states.fill(static_cast<int8_t>(0));
+            cmd.speeds.fill(static_cast<int8_t>(0));
+            cmd.states[Z] = 0;
+            cmd.states[YAW] = 0;
+            cmd.states[PITCH] = 0;
+            cmd.states[ROLL] = 0;
+            cmd.states[GRIP] = 0;
+            cmd.states[LIFT] = 0;
+            cmd_pub_.publish(cmd); 
+        }
+
+    if(buf_.isBuffered())
 	{
 		//Check for spikes
 		for (int ii = 0; ii < 60; ii++)
@@ -62,12 +79,14 @@ void ActVector::callback(const neuro_recv::dish_state::ConstPtr& d)
 
 void ActVector::run()
 {
+
     while (ros::ok())
     {
         ros::spinOnce();
 
-        if ((ros::Time::now() - lastSent > ros::Duration(0.2)) && buf_.isBuffered())
-        {
+        int x = 1;
+        
+        if((ros::Time::now() - lastSent > ros::Duration(0.2)) && buf_.isBuffered()){
         	lastSent = ros::Time::now();
 
         	//Normalize the activation vector
@@ -86,35 +105,39 @@ void ActVector::run()
         	if(fabs(leftDist-rightDist) > 0.2)
         	{
             	//Send the appropriate move
-            	arm::constant_move_time cmd;
+            	arm::constant_move cmd;
             	//TODO set up the end time? Fucking time server.
             	if(leftDist > rightDist)
             	{
             		ROS_INFO("More activity on left, moving LEFT.");
-            		cmd.move.states[Y] = ARM_LEFT;
+            		cmd.states[Y] = ARM_LEFT;
             	}
             	else
             	{
             		ROS_INFO("More activity on right, moving RIGHT.");
-            		cmd.move.states[Y] = ARM_RIGHT;
+            		cmd.states[Y] = ARM_RIGHT;
             	}
                 // Currently all axes have the same speed
-                cmd.move.speeds.fill(static_cast<int8_t>(2));
+                cmd.speeds.fill(static_cast<int8_t>(1));
 
                 // Everything else is 0 (doesn't move)
-                cmd.move.states[Z] = 0;
-                cmd.move.states[YAW] = 0;
-                cmd.move.states[PITCH] = 0;
-                cmd.move.states[ROLL] = 0;
-                cmd.move.states[GRIP] = 0;
-                cmd.move.states[LIFT] = 0;
+                cmd.states[Z] = 0;
+                cmd.states[YAW] = 0;
+                cmd.states[PITCH] = 0;
+                cmd.states[ROLL] = 0;
+                cmd.states[GRIP] = 0;
+                cmd.states[LIFT] = 0;
             	cmd_pub_.publish(cmd);
+
+                x = 0;
+
         	}
         	else
         	{
         		ROS_INFO("Sides of dish not different enough to trigger movement.");
         	}
         }
+        
     }
 }
 
@@ -124,7 +147,7 @@ void ActVector::init()
     //     Cartesian commands or constant move commands: for now you can use one
     //     or the other. Keep one commented out.
     //cmd_pub_ = n_.advertise<arm::cartesian_moves>("cartesian_moves", 1000);
-    cmd_pub_ = n_.advertise<arm::constant_move_time>("constant_move_times", 1);
+    cmd_pub_ = n_.advertise<arm::constant_move>("constant_moves", 1);
 
     ROS_INFO("Waiting for subscribers...");
     while((cmd_pub_.getNumSubscribers() < 1) && ros::ok());

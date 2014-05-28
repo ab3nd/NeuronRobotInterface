@@ -23,8 +23,18 @@ int main(int argc, char **argv) {
 	if (ros::param::get("/lvm_file_path", file_path)) {
 		//Open the file
 		lvm_file.open(file_path.c_str(), std::ios::out);
+		ROS_INFO("Trying to open the file!");
 		//Skip the header lines at the beginning of the file
+
+		if(!lvm_file.is_open())
+		{
+			ROS_INFO("The file did not open!");
+			ros::shutdown();
+		}
+		
+
 		for (int ii = 0; ii < 23; ++ii) {
+			ROS_INFO("skipping line %d of the header", ii);
 			lvm_file.ignore(std::numeric_limits < std::streamsize > ::max(), '\n');
 		}
 	} else {
@@ -42,6 +52,7 @@ int main(int argc, char **argv) {
 
 	while (ros::ok()) {
 		//get a line
+		
 		if (getline(lvm_file, current_line)) {
 			//Convert to a stream and read off the first value, which is the timestamp
 			std::istringstream line(current_line, std::istringstream::in);
@@ -67,10 +78,16 @@ int main(int argc, char **argv) {
 
 			//ship it off
 			zanni_pub.publish(outMsg);
+			
 		}
 		else
 		{
-			ROS_INFO("Done reading LVM file");
+			ROS_INFO("Done reading LVM file! Testing woop");
+			neuro_recv::dish_state outMsg;
+			outMsg.last_dish = 1;
+			outMsg.header.stamp = ros::Time::now() - offset;
+			zanni_pub.publish(outMsg);
+
 			lvm_file.close();
 			ros::shutdown();
 		}
