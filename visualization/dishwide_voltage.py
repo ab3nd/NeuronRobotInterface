@@ -51,6 +51,7 @@ def plotSingleImage(data):
             #samples = ll.getDataCol(channel)
             samples = data[channel]
             plt.plot(samples)
+            plt.ylim(-0.009, 0.009)
             ax.set_yticklabels([])
             ax.set_xticklabels([])
     plt.tight_layout()

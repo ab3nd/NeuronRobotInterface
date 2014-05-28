@@ -1893,6 +1893,11 @@ Getting everything set up on a new system (as of 5/27/14)
 	Install eclipse or other editor for editing code
 		sudo apt-get install eclipse
 
+	Install "real" Java, needed for pydev in Eclipse
+		sudo add-apt-repository ppa:webupd8team/java
+		sudo apt-get update
+		sudo apt-get install oracle-java8-installer
+
 	Install git and clone the repo
 		sudo apt-get install git-all
 		git clone git@code.cs.uml.edu:neurons/neurobotics.git
