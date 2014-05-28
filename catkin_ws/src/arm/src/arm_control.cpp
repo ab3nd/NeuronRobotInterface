@@ -206,7 +206,7 @@ void ArmControl::constantMoveTimeCallback(const arm::constant_move_time::ConstPt
 //    	//This is because calling the time server takes more time than short moves
 //        if (end_check.response.delta > ros::Duration(-0.1))
 //        {
-            ROS_INFO("Moving...");
+            ROS_INFO("Moving...");time;
 //            printf("Move start time  : %f\n", cmd->header.stamp.toSec());
 //            printf("Server time      : %f\n", end_check.response.actual.toSec());
 //            printf("Delta            : %f\n", (cmd->header.stamp -
