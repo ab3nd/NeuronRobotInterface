@@ -13,6 +13,7 @@
 #include <vector>
 #include <cmath>
 
+
 struct action{
     static const double lAct[60];
     static const double rAct[60];
@@ -49,11 +50,8 @@ private:
     void run();
     void init();
     void processDish(neuro_recv::dish_state d);
-
     double euclidianDistance(double a[],const double *b);
-
     BufferSpikeDetector buf_;
-
     ros::NodeHandle n_;
     ros::Subscriber dish_state_sub_;
     ros::Publisher cmd_pub_;
@@ -73,4 +71,6 @@ private:
     //weirdly bursty output with split culture
 
 };
+
+
 #endif

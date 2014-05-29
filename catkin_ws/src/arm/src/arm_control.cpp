@@ -7,6 +7,24 @@
 #include "arm_control.h"
 #include <cstdio>
 #include <cmath>
+#include <signal.h>
+#include <ros/xmlrpc_manager.h>
+
+static void mySigintHandler(int sig)
+{
+    ManusArm* stop_arm = ManusArm::instance();
+
+    ConstantMove stop_move;
+
+    for (int i = 0; i < CONST_MV_ARR_SZ; i++)
+            stop_move.states[i] = 0;
+        for (int i = 0; i < SPD_ARR_SZ; i++)
+            stop_move.speeds[i] = 0;
+        stop_arm->moveConstant(stop_move);
+
+  ros::shutdown();
+}
+
 
 /*!
  * \brief Calls the init and run methods
@@ -38,8 +56,11 @@ void ArmControl::init()
                                       this);
     time_client_ = n_.serviceClient<time_server::time_srv>("time_service");
 
+
+
     // Initialize the ARM
     arm_ = ManusArm::instance();
+
     try
     {
         arm_->init("can0");
@@ -169,7 +190,7 @@ void ArmControl::constantMoveCallback(const arm::constant_move::ConstPtr& cmd)
 {
 	if (cmd->quit)
 	{
-		shutdown_ = true;
+        shutdown_ = true;
 	}
 	else if (cmd->query)
     {
@@ -242,9 +263,16 @@ void ArmControl::constantMoveTimeCallback(const arm::constant_move_time::ConstPt
 /*!
  * \brief Creates an instance of the node
  */
+
+
+
+
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "arm_control");
+    ros::init(argc, argv, "arm_control",ros::init_options::NoSigintHandler);
+    ROS_INFO("Startomg Arm Control! Woop");
+    signal(SIGINT, mySigintHandler);
+
     ArmControl arm_control;
     return 0;
 }

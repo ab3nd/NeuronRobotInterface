@@ -6,6 +6,7 @@
 ros::Publisher zanni_pub;
 ros::Duration offset;
 
+
 void translate(const zanni::Channels& msg) {
 
 	//compose the new message
@@ -34,6 +35,7 @@ void translate(const zanni::Channels& msg) {
 int main(int argc, char **argv) {
 	ros::init(argc, argv, "zanni_translator");
 	ros::NodeHandle n;
+
 	ros::Subscriber sub = n.subscribe("zanni", 1000, translate);
 	zanni_pub = n.advertise<neuro_recv::dish_state>("dish_states_to_burst_creator", 1000);
 	offset = ros::Time::now() - ros::Time(0);

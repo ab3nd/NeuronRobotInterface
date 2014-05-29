@@ -13,7 +13,15 @@ arm/CMakeFiles/arm_control.dir/src/arm_control.cpp.o
  /home/dpickler/Work/neurobotics/catkin_ws/src/arm/include/arm_control.h
  /home/dpickler/Work/neurobotics/catkin_ws/src/arm/include/movement_definitions.h
  /home/dpickler/Work/neurobotics/catkin_ws/src/arm/src/arm_control.cpp
+ /opt/ros/hydro/include/XmlRpc.h
+ /opt/ros/hydro/include/XmlRpcClient.h
  /opt/ros/hydro/include/XmlRpcDecl.h
+ /opt/ros/hydro/include/XmlRpcDispatch.h
+ /opt/ros/hydro/include/XmlRpcException.h
+ /opt/ros/hydro/include/XmlRpcServer.h
+ /opt/ros/hydro/include/XmlRpcServerMethod.h
+ /opt/ros/hydro/include/XmlRpcSource.h
+ /opt/ros/hydro/include/XmlRpcUtil.h
  /opt/ros/hydro/include/XmlRpcValue.h
  /opt/ros/hydro/include/ros/advertise_options.h
  /opt/ros/hydro/include/ros/advertise_service_options.h
@@ -68,5 +76,6 @@ arm/CMakeFiles/arm_control.dir/src/arm_control.cpp.o
  /opt/ros/hydro/include/ros/types.h
  /opt/ros/hydro/include/ros/wall_timer.h
  /opt/ros/hydro/include/ros/wall_timer_options.h
+ /opt/ros/hydro/include/ros/xmlrpc_manager.h
  /opt/ros/hydro/include/rosconsole/macros_generated.h
  /opt/ros/hydro/include/std_msgs/Header.h

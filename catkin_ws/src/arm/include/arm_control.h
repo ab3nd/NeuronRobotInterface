@@ -38,7 +38,7 @@ private:
     void cartesianMovesCallback(const arm::cartesian_moves::ConstPtr& cmd);
     void constantMoveCallback(const arm::constant_move::ConstPtr& cmd);
     void constantMoveTimeCallback(const arm::constant_move_time::ConstPtr& cmd);
-    
+
     ros::NodeHandle n_;
     ros::Subscriber cartesian_sub_;
     ros::Subscriber constant_sub_;

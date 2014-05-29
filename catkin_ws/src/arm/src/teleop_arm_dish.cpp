@@ -14,6 +14,7 @@
 
 #define MIDPOINT 4.5
 
+
 /*!
  * \brief Calls the init and run methods
  */

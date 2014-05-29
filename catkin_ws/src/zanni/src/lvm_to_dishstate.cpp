@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 			//Convert to a stream and read off the first value, which is the timestamp
 			std::istringstream line(current_line, std::istringstream::in);
 			line >> value;
-
+			//ROS_INFO("Read a line!");
 			//Read the rest of the values and stick them into a message
 			neuro_recv::dish_state outMsg;
 			int index = 0;
@@ -69,6 +69,12 @@ int main(int argc, char **argv) {
 				outMsg.samples[index] = voltage;
 				index++;
 			}
+
+			if(!ros::ok())
+				{
+					outMsg.last_dish = 1;
+					zanni_pub.publish(outMsg);
+				}
 
 			//It's never the last dish
 			outMsg.last_dish = 0;
@@ -93,6 +99,18 @@ int main(int argc, char **argv) {
 		}
 		ros::spinOnce();
 		r.sleep();
+	}
+
+	if(!ros::ok())
+	{
+			ROS_INFO("Done reading LVM file! Testing woop");
+			neuro_recv::dish_state outMsg;
+			outMsg.last_dish = 1;
+			outMsg.header.stamp = ros::Time::now() - offset;
+			zanni_pub.publish(outMsg);
+
+			lvm_file.close();
+			ros::shutdown();
 	}
 
 	lvm_file.close();

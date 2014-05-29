@@ -5,7 +5,6 @@
  * TODO A lot of the messaging stuff from this, and the other nodes in arm_project/,
  * should be consolidated and ported to catkin rather than rosbuild.
  */
-
 #include "act_vector/act_vector.h"
 //The number e, for exponetial decay
 #define E (2.7182818284590452353602874713526624977572470937L)
@@ -13,6 +12,8 @@
 #define BETA (1.0/1000.0)
 //Used in normalization
 #define SIGMA (0.1)
+
+
 
 double ActVector::euclidianDistance(double a[], const double* b)
 {
@@ -25,22 +26,7 @@ double ActVector::euclidianDistance(double a[], const double* b)
 }
 void ActVector::callback(const neuro_recv::dish_state::ConstPtr& d)
 {
-	if (d->last_dish)
-        {   
-            
-            ROS_INFO("Stopping arm!");
-            //stops arm movement
-            arm::constant_move cmd;
-            cmd.states.fill(static_cast<int8_t>(0));
-            cmd.speeds.fill(static_cast<int8_t>(0));
-            cmd.states[Z] = 0;
-            cmd.states[YAW] = 0;
-            cmd.states[PITCH] = 0;
-            cmd.states[ROLL] = 0;
-            cmd.states[GRIP] = 0;
-            cmd.states[LIFT] = 0;
-            cmd_pub_.publish(cmd); 
-        }
+
 
     if(buf_.isBuffered())
 	{
@@ -79,6 +65,23 @@ void ActVector::callback(const neuro_recv::dish_state::ConstPtr& d)
 
 void ActVector::run()
 {
+
+    if(!ros::ok())
+        {
+            ROS_INFO("Test to stop the arm!");
+            
+        
+                        // Everything else is 0 (doesn't move)
+            arm::constant_move stop;
+            stop.speeds.fill(static_cast<int8_t>(0));
+            stop.states[Z] = 0;
+            stop.states[YAW] = 0;
+            stop.states[PITCH] = 0;
+            stop.states[ROLL] = 0;
+            stop.states[GRIP] = 0;
+            stop.states[LIFT] = 0;
+            cmd_pub_.publish(stop);
+        }
 
     while (ros::ok())
     {
@@ -138,7 +141,9 @@ void ActVector::run()
         	}
         }
         
+
     }
+
 }
 
 void ActVector::init()
@@ -148,6 +153,8 @@ void ActVector::init()
     //     or the other. Keep one commented out.
     //cmd_pub_ = n_.advertise<arm::cartesian_moves>("cartesian_moves", 1000);
     cmd_pub_ = n_.advertise<arm::constant_move>("constant_moves", 1);
+
+    
 
     ROS_INFO("Waiting for subscribers...");
     while((cmd_pub_.getNumSubscribers() < 1) && ros::ok());
@@ -169,15 +176,19 @@ void ActVector::init()
 		activation_[ii] = 0;
 	}
 
-	lastSent = ros::Time::now();
+    
+	
+    lastSent = ros::Time::now();
 	run();
 }
 
 int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "act_vector");
+
 	//Creator calls init(), which calls run()
 	ActVector av;
+    
 	return 0;
 
 }
