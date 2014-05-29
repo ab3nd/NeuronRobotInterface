@@ -1511,7 +1511,7 @@ vcan0: ERROR while getting interface flags: No such device
 ams@temperance:~/Downloads/peak-linux-driver-6.20$ sudo ifconfig vcan0 up
 vcan0: ERROR while getting interface flags: No such device
 ams@temperance:~/Downloads/peak-linux-driver-6.20$ sudo modprobe can
-WARNING: All config files need .conf: /etc/modprobe.d/pcan, it will be ignored in a future release.
+WARNING: All config files need .conf: /etc/modprobe.d/pcan, it will be ignored in a future release.pyplot set axis range
 ams@temperance:~/Downloads/peak-linux-driver-6.20$ sudo modprobe can-raw
 WARNING: All config files need .conf: /etc/modprobe.d/pcan, it will be ignored in a future release.
 ams@temperance:~/Downloads/peak-linux-driver-6.20$ sudo modprobe can-bcm
@@ -1651,6 +1651,7 @@ wRee is defined as the dot product of  roll, pitch, yaw rotation matrices, which
 Fw seems to have the origin at the top of the arm's "shoulder" (the column that attaches it to the base) 
 
 In the code:
+src/pcan-settings.c:50:18: fatal error: popt.h: No such file or directory
 
 3x1 vectors found in the code
 -----------------------------------------------
@@ -1687,6 +1688,7 @@ Rde			- Calculated in from We and dee2c
 				  
 WeRde		- EE2C_transform( pos ) * Rde;
 				  Used to set Vw = Vc - WeRde, so Vw is probably rotational velocities, but I have no idea about the units
+src/pcan-settings.c:50:18: fatal error: popt.h: No such file or directory
 
 YPR_star	- Yaw pitch roll something-or-other. Values set from pd, which is the "desired home position"
 				  Used in calculation of error_YPR as difference from YPR_star 
@@ -1722,11 +1724,12 @@ The updating is done in a if statement that checks to be sure if it has been mor
 This is probably because if you update faster than that, the newer messages replace the older ones.
 
 otherwise, pd_control2() does "translation (set-point move)". This is a lot like pd_control(), but with the loops broken out differently. 
-Instead of doing all of the speed calculation in one loop, linear speeds and rotational speeds are dealt with in separate loops. 
+Instead of doing all of the speed calculation in one loop, linear speeds and rotational speeds are dealt with in separate loops. src/pcan-settings.c:50:18: fatal error: popt.h: No such file or directory
+
 Logically, the functionality in pd_control(), this mode, and home_pos_flag mode all look identical. I haven't verified this. 
 
 Different modes may be due to switching between 6-DOF motion and pure translation to accomodate limited 
-field of view from the camera. Kate sent a paper that mentions this. 
+field of view from the camera. Kate sent a paper that mentions this. pyplot set axis range
 
 The arm motion consisted of a gross phase to put the gripper camera at the center of a region of interest and align it so that it was
 looking "out of" that region of interest towards the thing it would try to grasp, and a fine phase that would do the actual grasping.
@@ -1829,7 +1832,8 @@ New speeds: 0, 30, 0, 0, 0, 0,
 Target Position: -1794, 1263, -1208, -636, 816, 593, 
 Position: -1794, 1163, -1208, -636, 816, 593, 
 Error: 0, 100, 0, 0, 0, 0, 
-New speeds: 0, 30, 0, 0, 0, 0, 
+New speeds: 0, 30, 0, 0, 0, 0, src/pcan-settings.c:50:18: fatal error: popt.h: No such file or directory
+
 
 Target Position: -1794, 1263, -1208, -636, 816, 593, 
 Position: 15576, -4292, 3546, -636, 816, 593,					<-- WTF.  
@@ -1893,6 +1897,11 @@ Getting everything set up on a new system (as of 5/27/14)
 	Install eclipse or other editor for editing code
 		sudo apt-get install eclipse
 
+	Install "real" Java, needed for pydev in Eclipse
+		sudo add-apt-repository ppa:webupd8team/java
+		sudo apt-get update
+		sudo apt-get install oracle-java8-installer
+
 	Install git and clone the repo
 		sudo apt-get install git-all
 		git clone git@code.cs.uml.edu:neurons/neurobotics.git
@@ -1910,4 +1919,26 @@ Getting everything set up on a new system (as of 5/27/14)
 		sudo add-apt-repository ppa:berndporr/usbdux
 		sudo apt-get update
 		sudo apt-get install iir1-dev iir1
-	
+
+	Install the pcan linux drivers. I downloaded 7.11, they update pretty regularly. 
+		tar -xzvf peak-linux-driver-7.11.tar.gz
+		cd peak-linux-driver-7.11
+		make
+			get the error src/pcan-settings.c:50:18: fatal error: popt.h: No such file or directory
+			sudo apt-get install libpopt-dev fixes it
+		make again, it works
+		sudo make install
+		Got the messages:
+			Info: Copied 45-pcan.rules to /etc/udev/rules.d.
+			Info: mainline drivers removed and blacklisted in
+				  /etc/modprobe.d/blacklist-peak.conf
+		Added options pcan bitrate=0x011C to /etc/modprobe.d/pcan.conf
+			Now the file looks like this:
+				# pcan - automatic made entry, begin --------
+				# if required add options and remove comment
+				# options pcan type=isa,sp
+				options pcan bitrate=0x011C
+				install pcan /sbin/modprobe --ignore-install pcan
+				# pcan - automatic made entry, end ----------
+
+			
