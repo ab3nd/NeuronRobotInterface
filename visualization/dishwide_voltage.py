@@ -12,17 +12,18 @@ import labviewloader
 #across each channel, over all samples
 
 #Plot multiple data in multiple images
-def plotMultiImage(data):
+def plotMultiImage(data, plotRange):
     channelNum = 0;
     for channel in data:
         plt.figure(figsize=(25,6))
+        plt.ylim(range[1], range[0])
         plt.plot(channel)
         plt.savefig(baseTableName + "_v_ch_{0}.png".format(channelNum))
         channelNum += 1
         plt.clf()
 
 #Plot all data together in the same image
-def plotSingleImage(data):
+def plotSingleImage(data, plotRange):
     axisNum = 0
     plt.figure(figsize=(20,12))
     skip = 0
@@ -33,6 +34,11 @@ def plotSingleImage(data):
             
             #skip the corners
             if (row == 0) and (col == 0):
+                ax = plt.subplot(8,8,axisNum)
+                ax.text(0.0, 0.5, "+{0} / {1}".format(plotRange[0], plotRange[1]))
+                ax.get_xaxis().set_visible(False)
+                ax.get_yaxis().set_visible(False)
+                ax.set_axis_off()
                 skip += 1
                 continue
             if (row == 0) and (col == 7):
@@ -51,7 +57,7 @@ def plotSingleImage(data):
             #samples = ll.getDataCol(channel)
             samples = data[channel]
             plt.plot(samples)
-            plt.ylim(-0.009, 0.009)
+            plt.ylim(plotRange[1], plotRange[0])
             ax.set_yticklabels([])
             ax.set_xticklabels([])
     plt.tight_layout()
@@ -96,9 +102,11 @@ if __name__ == '__main__':
             samples = ll.getDataCol(channelNum)
             samples = [float(str(sample)) for sample in samples] 
             data.append(samples)
-            
+        
+        plotRange = (float(str(ll.getMax())), float(str(ll.getMin())))   
+         
     if args.multi_image:
-        plotMultiImage(data)
+        plotMultiImage(data, plotRange)
     else:
-        plotSingleImage(data)
+        plotSingleImage(data, plotRange)
                 

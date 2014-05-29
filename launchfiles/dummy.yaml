@@ -11,4 +11,4 @@ burst_window: 100
 # Path of the LVM file to load
 #lvm_file_path: /home/ams/Projects/neurobotics/experiments/divided_virtual_culture/labview_2014-2-27-13:31:26_9.lvm
 #lvm_file_path: /home/ams/Projects/neurobotics/plating_simulator/labview_2014-3-18-12:22:52_6.lvm
-lvm_file_path: /home/ams/Projects/neurobotics/data_files/labview_2014-3-18-12:22:52_6.lvm
+lvm_file_path: ../data_files/labview_2014-3-18-12:22:52_6.lvm
