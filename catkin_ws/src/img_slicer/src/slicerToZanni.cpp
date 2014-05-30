@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
 				zanni::Stim stimSrv;
 				int elements = sizeof(training_signal) / sizeof(training_signal[0]);
 				for (int ii = 0; ii < elements; ii++) {
-					stimSrv.request.signal.push_back(training_signal[ii]);
+					stimSrv.request.signal.push_back(training_signal[ii] * 10000);
 				}
 
 				//Pick a channel
