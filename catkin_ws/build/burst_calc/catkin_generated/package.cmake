@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "burst_calc")
-set(burst_calc_MAINTAINER "ams <orphrey@gmail.com>")
-set(burst_calc_DEPRECATED "")
-set(burst_calc_VERSION "0.0.0")
-set(burst_calc_BUILD_DEPENDS "message_generation" "roscpp" "std_msgs" "neuro_recv" "time_server")
-set(burst_calc_RUN_DEPENDS "roscpp" "message_runtime")
-set(burst_calc_BUILDTOOL_DEPENDS "catkin")

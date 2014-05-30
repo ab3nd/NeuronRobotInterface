@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "activation_vector")
-set(activation_vector_MAINTAINER "ams <ams@todo.todo>")
-set(activation_vector_DEPRECATED "")
-set(activation_vector_VERSION "0.0.0")
-set(activation_vector_BUILD_DEPENDS "burst_calc" "neuro_recv" "arm")
-set(activation_vector_RUN_DEPENDS )
-set(activation_vector_BUILDTOOL_DEPENDS "catkin")

@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC    -shared -Wl,-soname,libpractical_socket.so -o /home/dpickler/Work/neurobotics/catkin_ws/devel/lib/libpractical_socket.so CMakeFiles/practical_socket.dir/src/PracticalSocket.cpp.o 

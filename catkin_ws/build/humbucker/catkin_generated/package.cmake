@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "humbucker")
-set(humbucker_MAINTAINER "ams <ams@todo.todo>")
-set(humbucker_DEPRECATED "")
-set(humbucker_VERSION "0.0.0")
-set(humbucker_BUILD_DEPENDS "roscpp" "rospy" "std_msgs" "neuro_recv")
-set(humbucker_RUN_DEPENDS "roscpp" "rospy" "std_msgs")
-set(humbucker_BUILDTOOL_DEPENDS "catkin")

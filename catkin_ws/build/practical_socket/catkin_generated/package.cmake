@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "practical_socket")
-set(practical_socket_MAINTAINER "ams <ams@todo.todo>")
-set(practical_socket_DEPRECATED "")
-set(practical_socket_VERSION "0.0.0")
-set(practical_socket_BUILD_DEPENDS "roscpp")
-set(practical_socket_RUN_DEPENDS "roscpp")
-set(practical_socket_BUILDTOOL_DEPENDS "catkin")

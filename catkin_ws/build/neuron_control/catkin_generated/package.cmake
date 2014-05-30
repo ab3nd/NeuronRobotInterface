@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "neuron_control")
-set(neuron_control_MAINTAINER "Abe Shultz <orphrey@gmail.com>, Jonathan Hasenzahl <jhasenzahl@worcester.edu>, Abe Shultz <orphrey@gmail.com>")
-set(neuron_control_DEPRECATED "")
-set(neuron_control_VERSION "0.0.0")
-set(neuron_control_BUILD_DEPENDS )
-set(neuron_control_RUN_DEPENDS )
-set(neuron_control_BUILDTOOL_DEPENDS "catkin")

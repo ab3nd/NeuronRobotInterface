@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "neuro_recv")
-set(neuro_recv_MAINTAINER "ams <ams@todo.todo>")
-set(neuro_recv_DEPRECATED "")
-set(neuro_recv_VERSION "0.0.0")
-set(neuro_recv_BUILD_DEPENDS "roscpp" "message_generation" "std_msgs" "practical_socket")
-set(neuro_recv_RUN_DEPENDS "roscpp" "message_runtime")
-set(neuro_recv_BUILDTOOL_DEPENDS "catkin")
