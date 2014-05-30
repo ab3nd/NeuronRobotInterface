@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
 				leftCount += srv.response.pixelCount[ii];
 				rightCount += srv.response.pixelCount[4 - ii];
 			}
-			ROS_INFO("R: %u L: %u\n", leftCount, rightCount);
+			ROS_INFO("R: %lu L: %lu\n", leftCount, rightCount);
 			//Don't bother stimulating at all unless difference is big
 			if (abs(leftCount - rightCount) > 500) {
 
