@@ -1,1 +1,0 @@
-from ._ImageSlicer import *

@@ -1,8 +1,0 @@
-prefix=/home/dpickler/Work/neurobotics/catkin_ws/devel
-
-Name: humbucker
-Description: Description of humbucker
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/dpickler/Work/neurobotics/catkin_ws/devel/lib 
-Requires: 

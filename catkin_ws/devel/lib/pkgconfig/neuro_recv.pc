@@ -1,8 +1,0 @@
-prefix=/home/dpickler/Work/neurobotics/catkin_ws/devel
-
-Name: neuro_recv
-Description: Description of neuro_recv
-Version: 0.0.0
-Cflags: -I/home/dpickler/Work/neurobotics/catkin_ws/devel/include -I/home/dpickler/Work/neurobotics/catkin_ws/src/neuro_recv/include
-Libs: -L/home/dpickler/Work/neurobotics/catkin_ws/devel/lib 
-Requires: roscpp message_runtime

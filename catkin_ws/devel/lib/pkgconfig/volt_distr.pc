@@ -1,8 +1,0 @@
-prefix=/home/dpickler/Work/neurobotics/catkin_ws/devel
-
-Name: volt_distr
-Description: Description of volt_distr
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/dpickler/Work/neurobotics/catkin_ws/devel/lib 
-Requires: 
