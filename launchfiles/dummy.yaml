@@ -10,4 +10,4 @@ burst_window: 100
 
 # Path of the LVM file to load
 #lvm_file_path: /home/ams/Projects/neurobotics/experiments/divided_virtual_culture/labview_2014-2-27-13:31:26_9.lvm
-lvm_file_path: /home/dpickler/Work/neurobotics/data_files/arm_and_cup/Old/22Mar-control 1-2hrs 3-22-12.lvm
+lvm_file_path: /home/dpickler/Work/neurobotics/data_files/arm_and_cup/simulator.lvm
