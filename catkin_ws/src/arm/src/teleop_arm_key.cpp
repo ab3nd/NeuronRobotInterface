@@ -211,7 +211,8 @@ bool TeleopArmKey::getCommand(const char c)
         break;
     case KEYCODE_Q:
         cmd_.states.fill(0);
-        cmd_.quit = true;
+        ROS_INFO("Trying to Quit");
+        cmd_.quit= true;
         break;
     default:
         new_command = false;
@@ -233,14 +234,12 @@ void TeleopArmKey::print()
     printf("Lift[%d] Speed[%d]\n", cmd_.states[7], cmd_.speeds[0]);
 }
 
-/*!
- * \brief
- */
 void quit(int sig)
 {
-    tcsetattr(kfd, TCSANOW, &cooked);
+    tcsetattr(kfd, TCSAFLUSH, &cooked);
     exit(0);
 }
+
 
 /*!
  * \brief Creates an instance of the node
@@ -252,5 +251,6 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "teleop_arm_key");
     TeleopArmKey teleop_arm_key;
     ros::shutdown(); // To allow arm_control node to shutdown
+    tcsetattr(kfd, TCSAFLUSH, &cooked);
     return 0;
 }

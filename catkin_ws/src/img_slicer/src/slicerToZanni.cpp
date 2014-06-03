@@ -19,6 +19,13 @@
 #define P_WIDTH 720
 #define P_HEIGHT 480
 
+/*Defined mode:
+0: return number of red pixels
+1: retirm number of not red pixels
+*/
+#define MODE 0
+
+
 XPlotter* setupDisplay() {
 	PlotterParams plotter_params;
 	//Set up width and height
@@ -59,7 +66,7 @@ uint16_t valueMap(uint64_t input, uint min_in, uint max_in, int min_out, int max
 	return retVal;
 }
 
-int redrawDisplay(XPlotter* plotter, vector<uint64_t> counts) {
+int redrawDisplay(XPlotter* plotter, vector<uint64_t> counts, int mode) {
 	int segments = counts.size();
 	//Dividing by zero will END ALL. ZALGO!
 	if (segments == 0) {
@@ -107,7 +114,7 @@ int main(int argc, char** argv) {
 	//Run in a loop making the calls
 	while (n.ok()) {
 		if (sliceClient.call(srv)) {
-			redrawDisplay(plot, srv.response.pixelCount);
+			redrawDisplay(plot, srv.response.pixelCount, MODE);
 
 			uint64_t leftCount = 0;
 			uint64_t rightCount = 0;
@@ -115,7 +122,7 @@ int main(int argc, char** argv) {
 				leftCount += srv.response.pixelCount[ii];
 				rightCount += srv.response.pixelCount[4 - ii];
 			}
-			ROS_INFO("R: %u L: %u\n", leftCount, rightCount);
+			ROS_INFO("R: %lu L: %lu\n", leftCount, rightCount);
 			//Don't bother stimulating at all unless difference is big
 			if (abs(leftCount - rightCount) > 500) {
 
@@ -123,7 +130,7 @@ int main(int argc, char** argv) {
 				zanni::Stim stimSrv;
 				int elements = sizeof(training_signal) / sizeof(training_signal[0]);
 				for (int ii = 0; ii < elements; ii++) {
-					stimSrv.request.signal.push_back(training_signal[ii]);
+					stimSrv.request.signal.push_back(training_signal[ii] * 10000);
 				}
 
 				//Pick a channel

@@ -17,6 +17,8 @@ class LabViewLoader:
         self.header = {}
         self.rows = {}
         self.cols = {}
+        self.dataMax = 0;
+        self.dataMin = 0;
         
     def load(self, filename):
         infile = open(filename, 'r')
@@ -58,12 +60,25 @@ class LabViewLoader:
             #Convert to decimal numbers
             #pprint.pprint(values)
             #print "\n"
-            self.data[decimal.Decimal(values[0])] = [decimal.Decimal(d) for d in values[1:len(values)]]
+            dataLine = [decimal.Decimal(d) for d in values[1:len(values)]]
+            dataIndex = decimal.Decimal(values[0])
+            self.data[dataIndex] = dataLine
+            if max(dataLine) > self.dataMax:
+                self.dataMax = max(dataLine)
+            if min(dataLine) < self.dataMin:
+                self.dataMin = min(dataLine) 
             line = infile.readline()
         #Clean up
         #print sorted(self.data.keys())
         infile.close()
-          
+    
+    '''Getters for the maximum and minimum of the ENTIRE DATA FILE'''
+    def getMax(self):
+        return self.dataMax
+
+    def getMin(self):
+        return self.dataMin
+    
     '''
     Returns the value at the index if the key exists in the header and has more than 
     one value associated with it or if there is exactly one value associated with it. 

@@ -1,0 +1,19 @@
+<launch>
+   <rosparam command="load" file="./dummy.yaml"/>
+   
+   <!-- Start the node that creates dish_state messages from an LVM file -->
+   <node pkg="zanni" type="zanni_fake" name="zanni_to_dishstate"/>
+
+   <!-- Time Server -->
+   <!-- <node pkg="time_server" name="time_server" type="time_server"/> -->   
+
+         
+   <!-- Burst creator receives dish states and detects bursts of activity -->
+   <!-- <node pkg="burst_calc" name="burst_creator" type="burst_creator"/> -->
+
+   <!-- Launches the pattern recognition node-->
+   <node pkg="pattern_rec" type="pattern_rec" name="pattern_recognition"/>
+
+
+
+</launch>

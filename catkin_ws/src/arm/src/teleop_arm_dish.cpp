@@ -14,6 +14,7 @@
 
 #define MIDPOINT 4.5
 
+
 /*!
  * \brief Calls the init and run methods
  */
@@ -39,7 +40,7 @@ void TeleopArmDish::init()
     //     Cartesian commands or constant move commands: for now you can use one
     //     or the other. Keep one commented out.
     //cmd_pub_ = n_.advertise<arm::cartesian_moves>("cartesian_moves", 1000);
-    cmd_pub_ = n_.advertise<arm::constant_move_time>("constant_move_times", 1);
+    cmd_pub_ = n_.advertise<arm::constant_move>("constant_moves", 1);
     time_client_ = n_.serviceClient<time_server::time_srv>("time_service");
 
     // Wait for subscriber

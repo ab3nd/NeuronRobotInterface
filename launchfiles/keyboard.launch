@@ -1,0 +1,12 @@
+<launch>
+
+    <!-- Launch file for CSV playback -->
+    <rosparam command="load" file="./keyboard.yaml"/>
+    
+    <!-- Time Server -->
+    <node pkg="time_server" name="time_server" type="time_server"/>    
+
+    <!-- ARM Control -->   
+    <node pkg="arm" name="arm_control" type="arm_control"/>
+
+</launch>

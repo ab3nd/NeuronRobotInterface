@@ -5,7 +5,6 @@
  * TODO A lot of the messaging stuff from this, and the other nodes in arm_project/,
  * should be consolidated and ported to catkin rather than rosbuild.
  */
-
 #include "act_vector/act_vector.h"
 //The number e, for exponetial decay
 #define E (2.7182818284590452353602874713526624977572470937L)
@@ -14,7 +13,9 @@
 //Used in normalization
 #define SIGMA (0.1)
 
-double ActVector::euclidianDistance(double a[], double b[])
+
+
+double ActVector::euclidianDistance(double a[], const double* b)
 {
 	double total = 0;
 	for (int ii = 0; ii < 60; ii++)
@@ -25,7 +26,9 @@ double ActVector::euclidianDistance(double a[], double b[])
 }
 void ActVector::callback(const neuro_recv::dish_state::ConstPtr& d)
 {
-	if(buf_.isBuffered())
+
+
+    if(buf_.isBuffered())
 	{
 		//Check for spikes
 		for (int ii = 0; ii < 60; ii++)
@@ -62,12 +65,31 @@ void ActVector::callback(const neuro_recv::dish_state::ConstPtr& d)
 
 void ActVector::run()
 {
+
+    if(!ros::ok())
+        {
+            ROS_INFO("Test to stop the arm!");
+            
+        
+                        // Everything else is 0 (doesn't move)
+            arm::constant_move stop;
+            stop.speeds.fill(static_cast<int8_t>(0));
+            stop.states[Z] = 0;
+            stop.states[YAW] = 0;
+            stop.states[PITCH] = 0;
+            stop.states[ROLL] = 0;
+            stop.states[GRIP] = 0;
+            stop.states[LIFT] = 0;
+            cmd_pub_.publish(stop);
+        }
+
     while (ros::ok())
     {
         ros::spinOnce();
 
-        if ((ros::Time::now() - lastSent > ros::Duration(0.2)) && buf_.isBuffered())
-        {
+        int x = 1;
+        
+        if((ros::Time::now() - lastSent > ros::Duration(0.2)) && buf_.isBuffered()){
         	lastSent = ros::Time::now();
 
         	//Normalize the activation vector
@@ -77,8 +99,8 @@ void ActVector::run()
         	}
 
         	//Compare this activaton vector to the known ones
-        	float leftDist = euclidianDistance(normActivation_, lAct);
-        	float rightDist = euclidianDistance(normActivation_, rAct);
+        	float leftDist = euclidianDistance(normActivation_, action::lAct);
+        	float rightDist = euclidianDistance(normActivation_, action::rAct);
 
         	//printf("%f,%f,%f\n", leftDist, rightDist, fabs(leftDist-rightDist));
 
@@ -86,36 +108,42 @@ void ActVector::run()
         	if(fabs(leftDist-rightDist) > 0.2)
         	{
             	//Send the appropriate move
-            	arm::constant_move_time cmd;
+            	arm::constant_move cmd;
             	//TODO set up the end time? Fucking time server.
             	if(leftDist > rightDist)
             	{
             		ROS_INFO("More activity on left, moving LEFT.");
-            		cmd.move.states[Y] = ARM_LEFT;
+            		cmd.states[Y] = ARM_LEFT;
             	}
             	else
             	{
             		ROS_INFO("More activity on right, moving RIGHT.");
-            		cmd.move.states[Y] = ARM_RIGHT;
+            		cmd.states[Y] = ARM_RIGHT;
             	}
                 // Currently all axes have the same speed
-                cmd.move.speeds.fill(static_cast<int8_t>(2));
+                cmd.speeds.fill(static_cast<int8_t>(1));
 
                 // Everything else is 0 (doesn't move)
-                cmd.move.states[Z] = 0;
-                cmd.move.states[YAW] = 0;
-                cmd.move.states[PITCH] = 0;
-                cmd.move.states[ROLL] = 0;
-                cmd.move.states[GRIP] = 0;
-                cmd.move.states[LIFT] = 0;
+                cmd.states[Z] = 0;
+                cmd.states[YAW] = 0;
+                cmd.states[PITCH] = 0;
+                cmd.states[ROLL] = 0;
+                cmd.states[GRIP] = 0;
+                cmd.states[LIFT] = 0;
             	cmd_pub_.publish(cmd);
+
+                x = 0;
+
         	}
         	else
         	{
         		ROS_INFO("Sides of dish not different enough to trigger movement.");
         	}
         }
+        
+
     }
+
 }
 
 void ActVector::init()
@@ -124,7 +152,9 @@ void ActVector::init()
     //     Cartesian commands or constant move commands: for now you can use one
     //     or the other. Keep one commented out.
     //cmd_pub_ = n_.advertise<arm::cartesian_moves>("cartesian_moves", 1000);
-    cmd_pub_ = n_.advertise<arm::constant_move_time>("constant_move_times", 1);
+    cmd_pub_ = n_.advertise<arm::constant_move>("constant_moves", 1);
+
+    
 
     ROS_INFO("Waiting for subscribers...");
     while((cmd_pub_.getNumSubscribers() < 1) && ros::ok());
@@ -146,7 +176,9 @@ void ActVector::init()
 		activation_[ii] = 0;
 	}
 
-	lastSent = ros::Time::now();
+    
+	
+    lastSent = ros::Time::now();
 	run();
 }
 
@@ -154,8 +186,10 @@ void ActVector::init()
 int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "act_vector");
+
 	//Creator calls init(), which calls run()
 	ActVector av;
+    
 	return 0;
 
 }
