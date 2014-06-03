@@ -150,6 +150,7 @@ void ActVector::init()
 	run();
 }
 
+
 int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "act_vector");

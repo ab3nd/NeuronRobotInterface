@@ -14,14 +14,27 @@ int main(int argc, char **argv) {
 
 	for(int channel = 0; channel < 2; channel++)
 	{
-		//Fill in the service request with the data from the header file.
-		int elements = sizeof(tiny_sine)/sizeof(tiny_sine[0]);
-		for(int ii = 0; ii < elements; ii++)
-		{
-			//Multiply by 10000 because we're pushing +/-10V into a 10000-fold attenuation
-			//This way the input signals can still be in normal neuron signal range
-			srv.request.signal.push_back(tiny_sine[ii] * 10000);
-		}
+		srv.request.signal.clear();
+
+//		//Fill in the service request with the data from the header file.
+//		int elements = sizeof(tiny_sine)/sizeof(tiny_sine[0]);
+//		for(int ii = 0; ii < elements; ii++)
+//		{
+//			//Multiply by 10000 because we're pushing +/-10V into a 10000-fold attenuation
+//			//This way the input signals can still be in normal neuron signal range
+//			srv.request.signal.push_back(tiny_sine[ii] * 10000);
+//		}
+
+
+			//Fill in the service request with the data from the header file.
+			int elements = sizeof(training_signal)/sizeof(training_signal[0]);
+			for(int ii = 0; ii < elements; ii++)
+			{
+				//Multiply by 10000 because we're pushing +/-10V into a 10000-fold attenuation
+				//This way the input signals can still be in normal neuron signal range
+				srv.request.signal.push_back(training_signal[ii] * 10000);
+			}
+
 
 		//Set up the channel
 		srv.request.channel = channel;

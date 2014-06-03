@@ -110,7 +110,8 @@ int main(int argc, char **argv) {
 		//All get the same range and aref
 		chanlist[ii] = CR_PACK(ii, range, aref);
     //MEA-1060 has +/-4mV input, gain of 1200, so output of +/-4.8V
-		range = comedi_find_range(daq_dev, analog_in, channel, UNIT_volt, -4.0, 4.0);
+		//range = comedi_find_range(daq_dev, analog_in, channel, UNIT_volt, -4.0, 4.0);
+		range = comedi_find_range(daq_dev, analog_in, channel, UNIT_volt, -0.04, 0.04);
 		if(range < 0)
 		{
 			range = 0;
